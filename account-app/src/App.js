@@ -31,13 +31,15 @@ function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    console.log("Login attempted");
 
-    const response = await fetch("http://localhost:5001/login", {
+    const response = await fetch("http://localhost:5001/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, password }),
+      credentials: "include",
     });
 
     const data = await response.json();
