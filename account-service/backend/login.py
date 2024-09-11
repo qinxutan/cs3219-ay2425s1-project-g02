@@ -2,10 +2,10 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Example: User data stored in memory for demo purposes
-# In a real application, this should be stored securely in a database
+# Will change to use firebase db when other apis are set up
 users_db = {
     'user1@example.com': {
-        'password': generate_password_hash('password123')  # Correct password
+        'password': generate_password_hash('password123')
     }
 }
 
