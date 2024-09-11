@@ -1,11 +1,32 @@
-import React, { useState } from "react";
+import React from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import "./App.css";
 
+function Homepage() {
+  const navigate = useNavigate();
+
+  return (
+    <div className="homepage">
+      <div className="content">
+        <h1 className="header">PeerPrep</h1>
+        <p className="description">
+          Boost your skills and ace technical <br />
+          interviews with real-time peer <br />
+          collaboration.
+        </p>
+        <div className="button-container">
+          <button onClick={() => navigate("/login")} className="login-button">Login</button>
+          <button onClick={() => navigate("/create-account")} className="create-account-button">Create Account</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [error, setError] = React.useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -22,7 +43,7 @@ function LoginPage() {
     const data = await response.json();
 
     if (data.success) {
-      navigate("/login-success"); // Navigate to the success message route
+      navigate("/login-success");
     } else {
       setError(data.message);
     }
@@ -68,8 +89,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/login-success" element={<LoginSuccessPage />} /> {/* New Route for Success Page */}
+        <Route path="/" element={<Homepage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login-success" element={<LoginSuccessPage />} />
+        <Route path="/create-account" element={<div>Create Account Page</div>} /> {/* Placeholder for Create Account Page */}
         <Route path="*" element={<p>404: Page Not Found!</p>} />
       </Routes>
     </BrowserRouter>
@@ -77,4 +100,3 @@ function App() {
 }
 
 export default App;
-
