@@ -1,53 +1,59 @@
-const express = require("express");
-const app = express();
+const express = require('express');
+const bcrypt = require('bcryptjs');
+const router = express.Router();
 
-// Dependencies
-const morgan = require("morgan");
-const bodyParser = require("body-parser");
+// Example User data stored in memory for testing purposes
+// Replace with firebase later
+const usersDB = {
+    'user1@example.com': {
+        password: bcrypt.hashSync('password123', 10)
+    }
+};
 
-// Middleware to help in parsing, loggiong
-app.use(morgan("dev"));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+// Login Route
+router.post('/login', (req, res) => {
+  console.log(req.body);
+  const { email, password } = req.body;
 
-// To handle CORS Errors
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*"); // "*" -> Allow all links to access
-
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-
-  // Browsers usually send this before PUT or POST Requests
-  if (req.method === "OPTIONS") {
-    res.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, PATCH");
-    return res.status(200).json({});
+  if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Email and password are required' });
   }
 
-  // Continue Route Processing
-  next();
+  const user = usersDB[email];
+  
+  if (!user) {
+      return res.status(400).json({ success: false, message: 'Invalid Email' });
+  }
+
+  const passwordValid = bcrypt.compareSync(password, user.password);
+  
+  if (!passwordValid) {
+      return res.status(400).json({ success: false, message: 'Invalid Password' });
+  }
+
+  // Save the user's session
+  req.session.user = email;
+  res.json({ success: true, message: 'Login successful' });
 });
 
-// Routes
-const { getHealth, getJoke } = require("./Controllers/jokesController");
-app.use("/jokes", getJoke);
-app.use("/", getHealth);
 
-// Handle When No Route Match Is Found
-app.use((req, res, next) => {
-  const error = new Error("Route Not Found");
-  error.status = 404;
-  next(error);
+// Logout Route
+router.post('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Logout failed' });
+        }
+        res.json({ success: true, message: 'Logged out successfully' });
+    });
 });
 
-app.use((error, req, res, next) => {
-  res.status(error.status || 500);
-  res.json({
-    error: {
-      message: error.message,
-    },
-  });
+// Check Session Route
+router.get('/check_session', (req, res) => {
+    if (req.session.user) {
+        return res.json({ success: true, message: 'User is logged in' });
+    } else {
+        return res.json({ success: false, message: 'No active session' });
+    }
 });
 
-module.exports = app;
+module.exports = router;
