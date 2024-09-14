@@ -1,5 +1,5 @@
-import { ColumnDef, Row } from "@tanstack/react-table";
-import { IDictionary } from "../../../lib/utils";
+import { ColumnDef, Row, RowModel } from "@tanstack/react-table";
+import { IDictionary, isSubset } from "../../../lib/utils";
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
 import { Question, Difficulty } from "@/models/Question";
 
@@ -31,6 +31,7 @@ const getDifficultyClass = (difficulty: string) => {
       return "bg-red-100 text-red-800";
   }
 };
+
 export const columns: ColumnDef<Question>[] = [
   {
     header: ({ column }) => (
@@ -39,6 +40,13 @@ export const columns: ColumnDef<Question>[] = [
     id: "topics",
     accessorFn: (row) => row.topics.join(", "), // accessorFn is a function that takes a row and returns the value for that column
     enableGlobalFilter: false,
+    filterFn: (row, id, filterValue) => {
+      const cellValue: string = row.getValue(id);
+      const topics = new Set(cellValue.split(", "));
+      const filterTopics = new Set(filterValue);
+
+      return isSubset(filterTopics, topics);
+    },
   },
   {
     id: "dateCreated",

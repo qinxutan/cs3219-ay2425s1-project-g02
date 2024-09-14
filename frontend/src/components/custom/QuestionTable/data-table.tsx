@@ -22,6 +22,8 @@ import {
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { MultiSelect } from "@/components/ui/multi-select";
+import { Topic } from "@/models/Question";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -52,23 +54,32 @@ export function DataTable<TData, TValue>({
       columnFilters,
       globalFilter,
     },
+    initialState: {
+      columnVisibility: {
+        topics: false,
+      },
+    },
   });
+
+  const topicArray = Object.keys(Topic).map((key) => ({
+    value: Topic[key as keyof typeof Topic],
+    label: Topic[key as keyof typeof Topic],
+  }));
+
+  const handleValueChange = (selectedValues: string[]) => {
+    table.getColumn("topics")?.setFilterValue(selectedValues);
+  };
 
   return (
     <>
-      <div className="flex items-center py-4">
-        <div className="flex items-center py-4">
-          <Input
-            placeholder="Filter Topics"
-            value={
-              (table.getColumn("topics")?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) =>
-              table.getColumn("topics")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-        </div>
+      <div className="items-center py-4 grid grid-cols-2 gap-4">
+        <MultiSelect
+          options={topicArray}
+          value={(table.getColumn("topics")?.getFilterValue() as string) ?? ""}
+          onValueChange={handleValueChange}
+          placeholder="Filter Topics"
+          className="max-w-sm"
+        />
 
         <Input
           placeholder="Filter"
