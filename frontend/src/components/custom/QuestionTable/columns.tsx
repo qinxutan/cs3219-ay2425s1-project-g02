@@ -1,4 +1,4 @@
-import { ColumnDef, Row, RowModel } from "@tanstack/react-table";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import { IDictionary, isSubset } from "../../../lib/utils";
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
 import { Question, Difficulty } from "@/models/Question";
