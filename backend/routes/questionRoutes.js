@@ -3,7 +3,7 @@ const { getAllQuestions, createQuestion, deleteQuestion } = require('../controll
 const router = express.Router();
 
 // Route to get all questions (homepage)
-router.get('/', getAllQuestions);
+router.get('/get-all-questions', getAllQuestions);
 
 // Route to create a new question
 router.post('/create-question', createQuestion);
