@@ -1,9 +1,9 @@
-import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
-import { iDictionary } from "@/lib/utils";
-import { Difficulty, Question } from "@/models/Question";
 import { ColumnDef, Row } from "@tanstack/react-table";
+import { IDictionary } from "../../../lib/utils";
+import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
+import { Question, Difficulty } from "@/models/Question";
 
-const difficultyLevels: iDictionary<number> = {
+const difficultyLevels: IDictionary<number> = {
   Easy: 1,
   Medium: 2,
   Hard: 3,

@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
+import QuestionTable from "./components/custom/QuestionTable/QuestionTable";
 import HomePageView from "./views/HomePageView";
 import LoginPage from "./views/LoginPageView";
 import LoginSuccessPage from "./views/LoginSuccessPageView";
@@ -12,6 +13,7 @@ const App: React.FC = () => {
         <Route path="/" element={<HomePageView />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/login-success" element={<LoginSuccessPage />} />
+        <Route path="/questions" element={<QuestionTable />} />
         <Route
           path="/create-account"
           element={<div>Create Account Page</div>}

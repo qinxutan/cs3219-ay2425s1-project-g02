@@ -5,6 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export interface iDictionary<T> {
+export interface IDictionary<T> {
   [key: string]: T;
 }
