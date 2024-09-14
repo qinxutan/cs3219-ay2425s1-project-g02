@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
-import QuestionTable from "./components/custom/QuestionTable/QuestionTable";
 import HomePageView from "./views/HomePageView";
 import LoginPage from "./views/LoginPageView";
 import LoginSuccessPage from "./views/LoginSuccessPageView";
