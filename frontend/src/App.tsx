@@ -5,6 +5,7 @@ import QuestionTable from "./components/custom/QuestionTable/QuestionTable";
 import HomePageView from "./views/HomePageView";
 import LoginPage from "./views/LoginPageView";
 import LoginSuccessPage from "./views/LoginSuccessPageView";
+import QuestionPageView from "./views/QuestionPageView";
 
 const App: React.FC = () => {
   return (
@@ -13,7 +14,7 @@ const App: React.FC = () => {
         <Route path="/" element={<HomePageView />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/login-success" element={<LoginSuccessPage />} />
-        <Route path="/questions" element={<QuestionTable />} />
+        <Route path="/questions" element={<QuestionPageView />} />
         <Route
           path="/create-account"
           element={<div>Create Account Page</div>}

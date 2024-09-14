@@ -23,7 +23,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { Topic } from "@/models/Question";
+import { Topic, topicArray } from "@/models/Question";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -61,11 +61,6 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  const topicArray = Object.keys(Topic).map((key) => ({
-    value: Topic[key as keyof typeof Topic],
-    label: Topic[key as keyof typeof Topic],
-  }));
-
   const handleValueChange = (selectedValues: string[]) => {
     table.getColumn("topics")?.setFilterValue(selectedValues);
   };
@@ -95,7 +90,13 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      style={{
+                        minWidth: header.column.columnDef.size,
+                        maxWidth: header.column.columnDef.size,
+                      }}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -116,7 +117,13 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      style={{
+                        minWidth: cell.column.columnDef.size,
+                        maxWidth: cell.column.columnDef.size,
+                      }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
