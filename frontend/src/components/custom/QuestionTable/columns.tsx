@@ -51,7 +51,7 @@ export const columns: ColumnDef<Question>[] = [
   {
     id: "dateCreated",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Qn No." />
+      <DataTableColumnHeader column={column} title="No." />
     ),
     accessorFn: (row, index) => String(index + 1),
     sortingFn: dateSort,
@@ -68,19 +68,23 @@ export const columns: ColumnDef<Question>[] = [
   },
   {
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Difficulty" />
+      <div className="flex justify-center">
+        <DataTableColumnHeader column={column} title="Difficulty" />
+      </div>
     ),
     accessorKey: "difficulty",
     sortingFn: difficultySort,
     cell: ({ row }) => {
       const difficulty: Difficulty = row.getValue("difficulty");
       return (
-        <div
-          className={`flex rounded-lg justify-center items-center ${getDifficultyClass(
-            difficulty
-          )}`}
-        >
-          <span className={`py-1 font-bold text-xs`}>{difficulty}</span>
+        <div className="flex justify-center">
+          <div
+            className={`flex w-1/2 justify-center rounded-lg items-center ${getDifficultyClass(
+              difficulty
+            )}`}
+          >
+            <span className={`py-1 font-bold text-xs`}>{difficulty}</span>
+          </div>
         </div>
       );
     },

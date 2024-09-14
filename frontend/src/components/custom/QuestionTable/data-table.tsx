@@ -72,19 +72,19 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="items-center py-4 grid grid-cols-2 gap-4">
+      <div className="flex items-center justify-between my-3">
+        <Input
+          placeholder="Filter"
+          value={globalFilter}
+          onChange={(event) => table.setGlobalFilter(event.target.value)}
+          className="max-w-sm"
+        />
+
         <MultiSelect
           options={topicArray}
           value={(table.getColumn("topics")?.getFilterValue() as string) ?? ""}
           onValueChange={handleValueChange}
           placeholder="Filter Topics"
-          className="max-w-sm"
-        />
-
-        <Input
-          placeholder="Filter"
-          value={globalFilter}
-          onChange={(event) => table.setGlobalFilter(event.target.value)}
           className="max-w-sm"
         />
       </div>
