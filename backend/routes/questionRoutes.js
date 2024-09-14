@@ -9,6 +9,6 @@ router.get('/get-all-questions', getAllQuestions);
 router.post('/create-question', createQuestion);
 
 // Route to delete a question
-router.delete('/', deleteQuestion);
+router.delete('/delete-question', deleteQuestion);
 
 module.exports = router;
