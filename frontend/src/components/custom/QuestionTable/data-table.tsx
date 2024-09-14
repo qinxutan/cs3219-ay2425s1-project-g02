@@ -9,7 +9,6 @@ import {
   getPaginationRowModel,
   getFilteredRowModel,
   useReactTable,
-  ColumnFiltersState,
 } from "@tanstack/react-table";
 
 import {
@@ -20,9 +19,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "./button";
 import { useState } from "react";
-import { Input } from "./input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -34,34 +33,47 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState([]);
+  const [columnFilters, setColumnFilters] = useState([]);
 
   const table = useReactTable({
     data,
     columns,
+    enableGlobalFilter: true,
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onColumnFiltersChange: setColumnFilters,
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting,
       columnFilters,
+      globalFilter,
     },
   });
 
   return (
     <>
       <div className="flex items-center py-4">
+        <div className="flex items-center py-4">
+          <Input
+            placeholder="Filter Topics"
+            value={
+              (table.getColumn("topics")?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table.getColumn("topics")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+        </div>
+
         <Input
-          placeholder="Filter Me..."
-          value={
-            (table.getColumn("question")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("question")?.setFilterValue(event.target.value)
-          }
+          placeholder="Filter"
+          value={globalFilter}
+          onChange={(event) => table.setGlobalFilter(event.target.value)}
           className="max-w-sm"
         />
       </div>
