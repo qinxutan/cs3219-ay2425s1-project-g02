@@ -12,11 +12,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
+import profileIcon from "@/assets/profile.png";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [showDropdown, setShowDropdown] = useState<boolean>(false); // State to control dropdown visibility
   const navigate = useNavigate();
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
@@ -41,13 +43,56 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  const toggleDropdown = () => {
+    setShowDropdown((prev) => !prev);
+  };
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setShowDropdown(false);
+  };
+
   return (
     <main className="login-page">
+      <div className="profile-icon-container">
+        <img
+          src={profileIcon}
+          alt="Profile"
+          className="profile-icon"
+          onClick={toggleDropdown}
+        />
+        {showDropdown && (
+          <div className="dropdown-menu">
+            <Button
+              variant="ghost"
+              className="w-full text-left"
+              onClick={() => handleNavigation("/create-account")}
+            >
+              Create Account
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full text-left"
+              onClick={() => handleNavigation("/login")}
+            >
+              Login
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full text-left text-red-500"
+              onClick={() => handleNavigation("/delete-account")}
+            >
+              Delete Account
+            </Button>
+          </div>
+        )}
+      </div>
+
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle>Login</CardTitle>
           <CardDescription className="flex justify-between items-center">
-            Dont have an account?
+            Don’t have an account?
             <Button variant="link">Sign up here!</Button>
           </CardDescription>
         </CardHeader>
@@ -65,7 +110,7 @@ const LoginPage: React.FC = () => {
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="password">Pasword</Label>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   placeholder="password"
