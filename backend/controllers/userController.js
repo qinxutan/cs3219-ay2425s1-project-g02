@@ -1,34 +1,46 @@
 const bcrypt = require('bcryptjs');
-
-// Example User data stored in memory for testing purposes
-// Replace with firebase later
-const usersDB = {
-  'user1@example.com': {
-    password: bcrypt.hashSync('password123', 10),
-  },
-};
+const { db } = require('../config/firebaseConfig');
 
 // Login Controller
-const loginUser = (req, res) => {
+const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
+  // Save a test email and password to Firestore (if not already saved)
+  const testEmail = 'abc@gmail.com';
+  const testPassword = bcrypt.hashSync('abc123', bcrypt.genSaltSync());
+  
+  try {
+    const testUserDoc = await db.collection('users').doc(testEmail).get();
+    if (!testUserDoc.exists) {
+      await db.collection('users').doc(testEmail).set({ password: testPassword });
+    }
+  } catch (error) {
+    return res.status(500).send('Error initializing test user: ' + error.message);
+  }
+  
   if (!email || !password) {
     return res.status(400).json({ success: false, message: 'Email and password are required' });
   }
 
-  const user = usersDB[email];
-  if (!user) {
-    return res.status(400).json({ success: false, message: 'Invalid Email' });
-  }
+  try {
+    const userDoc = await db.collection('users').doc(email).get();
+    
+    if (!userDoc.exists) {
+      return res.status(400).json({ success: false, message: 'Invalid Email' });
+    }
 
-  const passwordValid = bcrypt.compareSync(password, user.password);
-  if (!passwordValid) {
-    return res.status(400).json({ success: false, message: 'Invalid Password' });
-  }
+    const user = userDoc.data();
+    const passwordValid = bcrypt.compareSync(password, user.password);
+    if (!passwordValid) {
+      return res.status(400).json({ success: false, message: 'Invalid Password' });
+    }
 
-  // Save the user's session
-  req.session.user = email;
-  res.json({ success: true, message: 'Login successful' });
+    req.session.user = email;
+    res.json({ success: true, message: 'Login successful' });
+
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 };
 
 // Logout Controller
@@ -51,31 +63,37 @@ const checkSession = (req, res) => {
 };
 
 // Delete Account Controller
-const deleteAccount = (req, res) => {
+const deleteAccount = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ success: false, message: 'Email and password are required' });
   }
 
-  const user = usersDB[email];
-  if (!user) {
-    return res.status(400).json({ success: false, message: 'Invalid Email' });
-  }
-
-  const passwordValid = bcrypt.compareSync(password, user.password);
-  if (!passwordValid) {
-    return res.status(400).json({ success: false, message: 'Invalid Password' });
-  }
-
-  // Delete user from the database
-  delete usersDB[email];
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ success: false, message: 'Logout failed' });
+  try {
+    const userDoc = await db.collection('users').doc(email).get();
+    
+    if (!userDoc.exists) {
+      return res.status(400).json({ success: false, message: 'Invalid Email' });
     }
-    res.json({ success: true, message: 'Account deleted successfully' });
-  });
+
+    const user = userDoc.data();
+    const passwordValid = bcrypt.compareSync(password, user.password);
+    if (!passwordValid) {
+      return res.status(400).json({ success: false, message: 'Invalid Password' });
+    }
+
+    // Delete user from the Firestore database
+    await db.collection('users').doc(email).delete();
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Logout failed' });
+      }
+      res.json({ success: true, message: 'Account deleted successfully' });
+    });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 };
 
 module.exports = {
