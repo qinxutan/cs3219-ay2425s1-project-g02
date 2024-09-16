@@ -23,7 +23,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { Topic, topicArray } from "@/models/Question";
+import { topicArray } from "@/models/Question";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
