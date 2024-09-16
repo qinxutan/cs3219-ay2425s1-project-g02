@@ -1,4 +1,5 @@
-import QuestionCard from "@/components/custom/QuestionCard/QuestionCard";
+import QuestionCard from "@/components/custom/Question/QuestionCard";
+import QuestionDialog from "@/components/custom/Question/QuestionDialog";
 import { Difficulty, Question, Topic } from "@/models/Question";
 
 const customQuestion: Question = {
@@ -37,8 +38,8 @@ const customQuestion: Question = {
 
 function CollabPageView() {
   return (
-    <main className="h-1/2">
-      <QuestionCard question={customQuestion} />
+    <main className="h-screen w-screen flex items-center justify-center">
+      <QuestionDialog question={customQuestion} />
     </main>
   );
 }
