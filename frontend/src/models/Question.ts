@@ -21,6 +21,16 @@ export enum Topic {
   Math = "Math",
 }
 
+export const topicArray = Object.keys(Topic).map((key) => ({
+  value: Topic[key as keyof typeof Topic],
+  label: Topic[key as keyof typeof Topic],
+}));
+
+export const difficultyArray = Object.keys(Difficulty).map((key) => ({
+  value: Difficulty[key as keyof typeof Difficulty],
+  label: Difficulty[key as keyof typeof Difficulty],
+}));
+
 export type Question = {
   id: string;
   title: string;
