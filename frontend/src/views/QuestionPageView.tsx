@@ -3,10 +3,10 @@ import QuestionTable from "@/components/custom/QuestionTable/QuestionTable";
 import { Separator } from "@/components/ui/separator";
 import { Title } from "@/components/ui/title";
 import "@/css/styles.css";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
-function HomePageView() {
-  const navigate = useNavigate();
+function QuestionPageView() {
+  // const navigate = useNavigate();
 
   return (
     <main className="h-screen w-screen p-5">
@@ -28,4 +28,4 @@ function HomePageView() {
   );
 }
 
-export default HomePageView;
+export default QuestionPageView;

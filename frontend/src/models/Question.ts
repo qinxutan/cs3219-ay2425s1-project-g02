@@ -19,7 +19,13 @@ export enum Topic {
   Greedy = "Greedy",
   BitManipulation = "Bit Manipulation",
   Math = "Math",
+  Algorithms = "Algorithms",
 }
+
+export type QuestionExample = {
+  input: string;
+  output: string;
+};
 
 export const topicArray = Object.keys(Topic).map((key) => ({
   value: Topic[key as keyof typeof Topic],
@@ -38,4 +44,6 @@ export type Question = {
   topics: Topic[];
   difficulty: Difficulty;
   dateCreated: string;
+  examples: QuestionExample[];
+  constraints: string[];
 };

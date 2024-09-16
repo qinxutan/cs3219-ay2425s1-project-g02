@@ -5,9 +5,9 @@ const questionRoutes = require("./routes/questionRoutes");
 const firebaseConfig = require("./config/firebaseConfig"); // Ensure Firebase is initialized
 const app = express();
 
-// Allow requests from http://localhost:5173 with credentials
+// Allow requests from http://localhost:8080 with credentials
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'http://localhost:8080',
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
 

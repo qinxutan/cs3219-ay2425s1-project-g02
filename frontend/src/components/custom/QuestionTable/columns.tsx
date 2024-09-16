@@ -55,7 +55,7 @@ export const columns: ColumnDef<Question>[] = [
         <DataTableColumnHeader column={column} title="No." />
       </div>
     ),
-    accessorFn: (row, index) => index + 1, // Return the raw index value (starting from 1)
+    accessorFn: (_, index) => index + 1, // Return the raw index value (starting from 1)
     cell: ({ cell }) => (
       <div className="flex justify-center items-center h-full">
         {String(cell.getValue())}

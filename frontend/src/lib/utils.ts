@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-const backendUrl = "http://localhost:3000";
+const backendUrl = "http://localhost:3001";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
