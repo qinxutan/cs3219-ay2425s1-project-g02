@@ -1,9 +1,9 @@
-import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
-import { iDictionary } from "@/lib/utils";
-import { Difficulty, Question } from "@/models/Question";
 import { ColumnDef, Row } from "@tanstack/react-table";
+import { IDictionary, isSubset } from "../../../lib/utils";
+import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
+import { Question, Difficulty } from "@/models/Question";
 
-const difficultyLevels: iDictionary<number> = {
+const difficultyLevels: IDictionary<number> = {
   Easy: 1,
   Medium: 2,
   Hard: 3,
@@ -13,6 +13,12 @@ const difficultySort = (rowA: Row<Question>, rowB: Row<Question>) => {
   const diffA: string = rowA.getValue("difficulty");
   const diffB: string = rowB.getValue("difficulty");
   return difficultyLevels[diffA] - difficultyLevels[diffB];
+};
+
+const dateSort = (rowA: Row<Question>, rowB: Row<Question>) => {
+  const dateA: string = rowA.getValue("dateCreated");
+  const dateB: string = rowB.getValue("dateCreated");
+  return new Date(dateA).getTime() - new Date(dateB).getTime();
 };
 
 const getDifficultyClass = (difficulty: string) => {
@@ -29,31 +35,59 @@ const getDifficultyClass = (difficulty: string) => {
 export const columns: ColumnDef<Question>[] = [
   {
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ID" />
+      <DataTableColumnHeader column={column} title="Topics" />
     ),
-    accessorKey: "id",
+    id: "topics",
+    accessorFn: (row) => row.topics.join(", "), // accessorFn is a function that takes a row and returns the value for that column
+    enableGlobalFilter: false,
+    filterFn: (row, id, filterValue) => {
+      const cellValue: string = row.getValue(id);
+      const topics = new Set(cellValue.split(", "));
+      const filterTopics = new Set(filterValue);
+
+      return isSubset(filterTopics, topics);
+    },
+  },
+  {
+    id: "dateCreated",
+    header: ({ column }) => (
+      <div className="flex justify-center">
+        <DataTableColumnHeader column={column} title="No." />
+      </div>
+    ),
+    accessorFn: (row, index) => index + 1, // Return the raw index value (starting from 1)
+    cell: ({ cell }) => (
+      <div className="flex justify-center items-center h-full">
+        {String(cell.getValue())}
+      </div>
+    ),
+    sortingFn: dateSort,
+    size: 25,
   },
   {
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Questions" />
     ),
-    accessorKey: "question",
+    accessorKey: "title",
     cell: ({ row }) => {
-      const question: string = row.getValue("question");
-      return <div className="line-clamp-1">{question}</div>;
+      const title: string = row.getValue("title");
+      return <div className="line-clamp-1">{title}</div>;
     },
   },
   {
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Difficulty" />
+      <div className="flex justify-center">
+        <DataTableColumnHeader column={column} title="Difficulty" />
+      </div>
     ),
     accessorKey: "difficulty",
     sortingFn: difficultySort,
+
     cell: ({ row }) => {
       const difficulty: Difficulty = row.getValue("difficulty");
       return (
         <div
-          className={`flex rounded-lg justify-center items-center ${getDifficultyClass(
+          className={`flex justify-center rounded-lg items-center ${getDifficultyClass(
             difficulty
           )}`}
         >
@@ -61,5 +95,6 @@ export const columns: ColumnDef<Question>[] = [
         </div>
       );
     },
+    size: 25,
   },
 ];
