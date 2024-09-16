@@ -7,15 +7,19 @@ import React from "react";
 // Define the prop types for the component
 type QuestionProps = {
   question: Question;
+  variant?: "default" | "ghost";
 };
 
 // Functional component that takes a custom question prop
-const QuestionCard: React.FC<QuestionProps> = ({ question }) => {
+const QuestionCard: React.FC<QuestionProps> = ({
+  question,
+  variant = "default",
+}) => {
   const visibleTopics: Topic[] = question.topics.slice(0, 3);
   const moreTopicsCount: number = question.topics.length - visibleTopics.length;
 
   return (
-    <Card className="w-[500px] m-5">
+    <Card variant={variant} className="w-full h-full">
       <CardHeader>
         <CardTitle>{question.title}</CardTitle>
         <div className="inline-flex gap-1">
