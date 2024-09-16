@@ -48,7 +48,9 @@ const QuestionCard: React.FC<QuestionProps> = ({
       </CardHeader>
       <CardContent>
         <div>{question.description}</div>
-        <Separator className="my-2" />
+        {(question.examples.length > 0 || question.constraints.length > 0) && (
+          <Separator className="my-2" />
+        )}
         {question.examples.length > 0 &&
           question.examples.map((example: QuestionExample, index: number) => (
             <div>
