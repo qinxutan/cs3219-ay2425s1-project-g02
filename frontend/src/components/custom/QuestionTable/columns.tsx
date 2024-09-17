@@ -2,6 +2,7 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import { IDictionary, isSubset } from "../../../lib/utils";
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
 import { Question, Difficulty } from "@/models/Question";
+import QuestionDialog from "../Question/QuestionDialog";
 
 const difficultyLevels: IDictionary<number> = {
   Easy: 1,
@@ -70,8 +71,7 @@ export const columns: ColumnDef<Question>[] = [
     ),
     accessorKey: "title",
     cell: ({ row }) => {
-      const title: string = row.getValue("title");
-      return <div className="line-clamp-1">{title}</div>;
+      return <QuestionDialog question={row.original} />;
     },
   },
   {
