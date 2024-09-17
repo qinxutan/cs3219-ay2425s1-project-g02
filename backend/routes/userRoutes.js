@@ -1,4 +1,5 @@
 const express = require('express');
+const authenticateToken = require('../middleware/authenticateToken'); // Import the authentication middleware
 const {
   loginUser,
   logoutUser,
@@ -8,16 +9,16 @@ const {
 
 const router = express.Router();
 
-// Login Route
+// Login Route (no authentication required)
 router.post('/login', loginUser);
 
-// Logout Route
-router.post('/logout', logoutUser);
+// Logout Route (authentication required)
+router.post('/logout', authenticateToken, logoutUser);
 
-// Check Session Route
-router.get('/check_session', checkSession);
+// Check Session Route (authentication required)
+router.get('/check_session', authenticateToken, checkSession);
 
-// Delete Account Route
-router.delete('/delete_account', deleteAccount);
+// Delete Account Route (authentication required)
+router.delete('/delete_account', authenticateToken, deleteAccount);
 
 module.exports = router;

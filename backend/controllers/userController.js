@@ -1,8 +1,8 @@
-const bcrypt = require('bcryptjs');
-const { db } = require('../config/firebaseConfig');
+//const bcrypt = require('bcryptjs');
+//const { db } = require('../config/firebaseConfig');
 
 // Login Controller
-const loginUser = async (req, res) => {
+/*const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   // Save a test email and password to Firestore (if not already saved)
@@ -63,6 +63,17 @@ const checkSession = (req, res) => {
 };
 
 // Delete Account Controller
+const admin = require('firebase-admin');
+const bcrypt = require('bcrypt');
+
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+  });
+}
+
+const db = admin.firestore();
+
 const deleteAccount = async (req, res) => {
   const { email, password } = req.body;
 
@@ -83,22 +94,46 @@ const deleteAccount = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid Password' });
     }
 
-    // Delete user from the Firestore database
     await db.collection('users').doc(email).delete();
-    req.session.destroy((err) => {
-      if (err) {
-        return res.status(500).json({ success: false, message: 'Logout failed' });
-      }
-      res.json({ success: true, message: 'Account deleted successfully' });
-    });
+    res.json({ success: true, message: 'Account deleted successfully' });
   } catch (error) {
+    console.error('Error deleting account:', error);
     res.status(500).send(error.message);
   }
+};
+
+module.exports = {
+  deleteAccount,
+};
+ */
+
+// controllers/userController.js
+
+const admin = require('../config/firebaseConfig'); // Import Firebase config for admin SDK
+
+// Placeholder function for user login (handled on the frontend with Firebase)
+const loginUser = async (req, res) => {
+  res.status(200).json({ message: 'Login handled on the client side' });
+};
+
+// Placeholder function for user logout (handled on the frontend with Firebase)
+const logoutUser = async (req, res) => {
+  res.status(200).json({ message: 'Logout handled on the client side' });
+};
+
+// Placeholder function for checking user session (handled on the frontend with Firebase)
+const checkSession = async (req, res) => {
+  res.status(200).json({ message: 'Session check handled on the client side' });
+};
+
+// Placeholder function for deleting user account (handled on the frontend with Firebase)
+const deleteAccount = async (req, res) => {
+  res.status(200).json({ message: 'Account deletion handled on the client side' });
 };
 
 module.exports = {
   loginUser,
   logoutUser,
   checkSession,
-  deleteAccount,
+  deleteAccount
 };

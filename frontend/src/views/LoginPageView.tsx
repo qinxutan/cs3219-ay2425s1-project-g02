@@ -1,6 +1,8 @@
 import React, { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import "@/css/styles.css";
+import { auth } from "../config/firebaseConfig"; // Adjust the path if necessary
+import { signInWithEmailAndPassword } from "firebase/auth";
+import "@/css/styles.css"; // Adjust the path if necessary
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -25,21 +27,13 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     console.log("Login attempted");
 
-    const response = await fetch("http://localhost:5001/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-      credentials: "include",
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const idToken = await userCredential.user.getIdToken();
+      localStorage.setItem('authToken', idToken);
       navigate("/login-success");
-    } else {
-      setError(data.message);
+    } catch (error) {
+      setError("Login failed. Please check your credentials.");
     }
   };
 
@@ -93,7 +87,9 @@ const LoginPage: React.FC = () => {
           <CardTitle>Login</CardTitle>
           <CardDescription className="flex justify-between items-center">
             Don’t have an account?
-            <Button variant="link">Sign up here!</Button>
+            <Button variant="link" onClick={() => navigate("/create-account")}>
+              Sign up here!
+            </Button>
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleLogin}>
@@ -114,16 +110,20 @@ const LoginPage: React.FC = () => {
                 <Input
                   id="password"
                   placeholder="password"
+                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
+              {error && <div className="error-message">{error}</div>}
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button type="submit">Login</Button>
-            <Button variant="outline">Forget Password</Button>
+            <Button variant="outline" onClick={() => navigate("/forgot-password")}>
+              Forget Password
+            </Button>
           </CardFooter>
         </form>
       </Card>
