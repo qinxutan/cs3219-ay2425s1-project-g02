@@ -2,12 +2,8 @@ import MatchingOptions from "@/components/custom/MatchingOptions/MatchingOptions
 import QuestionTable from "@/components/custom/QuestionTable/QuestionTable";
 import { Separator } from "@/components/ui/separator";
 import { Title } from "@/components/ui/title";
-import "@/css/styles.css";
-import { useNavigate } from "react-router-dom";
 
-function HomePageView() {
-  const navigate = useNavigate();
-
+function QuestionPageView() {
   return (
     <main className="h-screen w-screen p-5">
       <div className="mb-4">
@@ -28,4 +24,4 @@ function HomePageView() {
   );
 }
 
-export default HomePageView;
+export default QuestionPageView;

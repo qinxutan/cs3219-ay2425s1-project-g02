@@ -4,6 +4,7 @@ import "./App.css";
 import HomePageView from "./views/HomePageView";
 import LoginPage from "./views/LoginPageView";
 import QuestionPageView from "./views/QuestionPageView";
+import CollabPageView from "./views/CollabPageView";
 import DeleteAccountPage from "./views/DeleteAccountPageView";
 
 const App: React.FC = () => {
@@ -13,6 +14,7 @@ const App: React.FC = () => {
         <Route path="/" element={<HomePageView />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/questions" element={<QuestionPageView />} />
+        <Route path="/collab" element={<CollabPageView />} />
         <Route path="/delete-account" element={<DeleteAccountPage />} />
         <Route
           path="/create-account"
