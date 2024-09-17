@@ -38,6 +38,7 @@ const LoginPage: React.FC = () => {
       navigate("/login-success");
     } else {
       setError(data.message);
+      console.log(error)
     }
   };
 

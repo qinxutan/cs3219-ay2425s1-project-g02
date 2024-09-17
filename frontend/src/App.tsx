@@ -5,6 +5,7 @@ import HomePageView from "./views/HomePageView";
 import LoginPage from "./views/LoginPageView";
 import LoginSuccessPage from "./views/LoginSuccessPageView";
 import QuestionPageView from "./views/QuestionPageView";
+import CollabPageView from "./views/CollabPageView";
 
 const App: React.FC = () => {
   return (
@@ -14,6 +15,7 @@ const App: React.FC = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/login-success" element={<LoginSuccessPage />} />
         <Route path="/questions" element={<QuestionPageView />} />
+        <Route path="/collab" element={<CollabPageView />} />
         <Route
           path="/create-account"
           element={<div>Create Account Page</div>}

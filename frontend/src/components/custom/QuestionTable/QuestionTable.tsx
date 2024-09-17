@@ -1,5 +1,5 @@
 import { Question } from "@/models/Question";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { columns } from "./columns";
 import { getAllQuestions } from "@/services/QuestionFunctions";
 import { DataTable } from "./data-table";
