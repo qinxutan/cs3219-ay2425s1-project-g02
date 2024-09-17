@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import HomePageView from "./views/HomePageView";
 import LoginPage from "./views/LoginPageView";
-import LoginSuccessPage from "./views/LoginSuccessPageView";
+import QuestionPageView from "./views/QuestionPageView";
 import DeleteAccountPage from "./views/DeleteAccountPageView";
 
 const App: React.FC = () => {
@@ -12,7 +12,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<HomePageView />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/login-success" element={<LoginSuccessPage />} />
+        <Route path="/questions" element={<QuestionPageView />} />
         <Route path="/delete-account" element={<DeleteAccountPage />} />
         <Route
           path="/create-account"

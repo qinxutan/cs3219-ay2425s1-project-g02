@@ -31,7 +31,7 @@ const LoginPage: React.FC = () => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const idToken = await userCredential.user.getIdToken();
       localStorage.setItem('authToken', idToken);
-      navigate("/login-success");
+      navigate("/questions");
     } catch (error) {
       setError("Login failed. Please check your credentials.");
     }
@@ -87,7 +87,7 @@ const LoginPage: React.FC = () => {
           <CardTitle>Login</CardTitle>
           <CardDescription className="flex justify-between items-center">
             Don’t have an account?
-            <Button variant="link" onClick={() => navigate("/create-account")}>
+            <Button className="sign-up-button" variant="link" onClick={() => navigate("/create-account")}>
               Sign up here!
             </Button>
           </CardDescription>
