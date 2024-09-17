@@ -210,6 +210,47 @@
   gap: 1em;
 }
 
+.profile-icon-container {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+}
+
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  position: fixed; 
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: fixed;
+  top: 60px; 
+  right: 10px; 
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 10px;
+  width: 150px; /* Adjust width as necessary */
+}
+
+.dropdown-menu button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background-color: white;
+  cursor: pointer;
+  text-align: left;
+}
+
+.dropdown-menu button:hover {
+  background-color: #f0f0f0;
+}
 
 .error {
   color: red;
