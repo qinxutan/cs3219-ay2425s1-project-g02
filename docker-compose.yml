@@ -3,14 +3,14 @@ services:
   backend-question_service:
     build: ./backend/question_service # Path to the directory containing the Dockerfile for building the question service image.
     ports:
-      - 3001:3001 # Maps port 3001 on the host to port 3001 in the container, making the app accessible on the host.
+      - 5001:5001 # Maps port 5001 on the host to port 5001 in the container, making the app accessible on the host.
     networks:
       - app-network 
 
   frontend:
     build: ./frontend
     ports:
-      - 8080:80
+      - 3000:80
     networks:
       - app-network
 

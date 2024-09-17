@@ -22,20 +22,20 @@ The PeerPrep backend provides a service for managing and querying questions used
 3. **Create and Run the Docker Container**
    
    ```sh
-   docker run -d -p 3001:3001 --name peerprep-backend-app peerprep-backend
+   docker run -d -p 5001:5001 --name peerprep-backend-app peerprep-backend
    ```
 
-4. **You can find the server started at localhost:3001**
+4. **You can find the server started at localhost:5001**
 
 ## Trying out the question service
 
 1. **View the questions**
    
-   Visit localhost:3001
+   Visit localhost:5001
 
 2. **Create a question**
    
-   You can test out the question service by using a tool such as postman to send HTTP requests alongside custom json data to the server. To create a question, go to localhost:3001/create-question on postman, select post type, and add the following json to the http post request body, feel free to edit freely:
+   You can test out the question service by using a tool such as postman to send HTTP requests alongside custom json data to the server. To create a question, go to localhost:5001/create-question on postman, select post type, and add the following json to the http post request body, feel free to edit freely:
 
    ```sh
    {
@@ -51,7 +51,7 @@ The PeerPrep backend provides a service for managing and querying questions used
 
 3. **Delete a question**
    
-   To delete a question, go to localhost:3001 on postman, select delete type, and add the following json to the http request body:
+   To delete a question, go to localhost:5001 on postman, select delete type, and add the following json to the http request body:
 
    ```sh
    {
