@@ -1,13 +1,56 @@
+import React, { useState } from "react";
 import MatchingOptions from "@/components/custom/MatchingOptions/MatchingOptions";
 import QuestionTable from "@/components/custom/QuestionTable/QuestionTable";
 import { Separator } from "@/components/ui/separator";
 import { Title } from "@/components/ui/title";
+import profileIcon from "@/assets/profile.png"; // Adjust the path if necessary
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import "@/css/styles.css";
 
-function QuestionPageView() {
+const QuestionPageView: React.FC = () => {
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  const toggleDropdown = () => {
+    setShowDropdown((prev) => !prev);
+  };
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setShowDropdown(false);
+  };
+
   return (
     <main className="h-screen w-screen p-5">
-      <div className="mb-4">
+      <div className="flex items-center justify-between mb-4">
         <Title title="Question Bank" />
+        <div className="profile-icon-container">
+          <img
+            src={profileIcon}
+            alt="Profile"
+            className="profile-icon"
+            onClick={toggleDropdown}
+          />
+          {showDropdown && (
+            <div className="dropdown-menu">
+              <Button
+                variant="ghost"
+                className="w-full text-left"
+                onClick={() => handleNavigation("/")}
+              >
+                Logout
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full text-left text-red-500"
+                onClick={() => handleNavigation("/delete-account")}
+              >
+                Delete Account
+              </Button>
+            </div>
+          )}
+        </div>
         <Separator className="my-2" />
       </div>
 
@@ -22,6 +65,6 @@ function QuestionPageView() {
       </div>
     </main>
   );
-}
+};
 
 export default QuestionPageView;
