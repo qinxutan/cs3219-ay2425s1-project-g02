@@ -5,6 +5,15 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'; // For interactiv
 import * as Checkbox from '@radix-ui/react-checkbox'; // Optional: For selecting rows
 import { CheckIcon, HamburgerMenuIcon } from '@radix-ui/react-icons'; // Optional: For checkbox styling
 import "@/css/styles.css"; // Adjust the path if necessary
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 const AdminConsoleView: React.FC = () => {
     
@@ -78,8 +87,8 @@ const AdminConsoleView: React.FC = () => {
       <div>
         <h1>Admin Console</h1>
         <p>Welcome to the console!</p>
-        <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid black'}} >
-          <thead>
+        <Table>
+          {/* <thead>
             <tr>
               <th>Select</th>
               <th>ID</th>
@@ -89,27 +98,39 @@ const AdminConsoleView: React.FC = () => {
               <th>Location</th>
               <th>Actions</th>
             </tr>
-          </thead>
-          <tbody>
+          </thead> */}
+
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">Select</TableHead>
+              <TableHead>ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Age</TableHead>
+              <TableHead>Occupation</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {users.map((user) => (
-              <tr key={user.id} style={{ borderRight: '1px black', borderBottom: '1px solid #ddd', textAlign: 'center' }}>
+              <TableRow key={user.id} style={{ borderRight: '1px black', borderBottom: '1px solid #ddd', textAlign: 'center' }}>
                 {/* Select Checkbox */}
-                <td>
+                <TableCell>
                   <Checkbox.Root className="CheckboxRoot">
                     <Checkbox.Indicator className="CheckboxIndicator">
                       <CheckIcon />
                     </Checkbox.Indicator>
                   </Checkbox.Root>
-                </td>
+                </TableCell>
                 
-                <td>{user.id}</td>
-                <td>{user.name}</td>
-                <td>{user.age}</td>
-                <td>{user.occupation}</td>
-                <td>{user.location}</td>
+                <TableCell>{user.id}</TableCell>
+                <TableCell>{user.name}</TableCell>
+                <TableCell>{user.age}</TableCell>
+                <TableCell>{user.occupation}</TableCell>
+                <TableCell>{user.location}</TableCell>
 
                 {/* DropdownMenu for Actions */}
-                <td>
+                <TableCell>
                   <DropdownMenu.Root>
                     <DropdownMenu.Trigger asChild>
                       <button style={{ padding: '5px', borderRadius: '4px', background: '#f0f0f0' }}>
@@ -137,12 +158,12 @@ const AdminConsoleView: React.FC = () => {
                       </DropdownMenu.Item>
                     </DropdownMenu.Content>
                   </DropdownMenu.Root>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-      </table>
-      </div>
+          </TableBody>
+      </Table>
+    </div>
       
     );
 };
