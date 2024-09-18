@@ -6,6 +6,7 @@ import LoginPage from "./views/LoginPageView";
 import QuestionPageView from "./views/QuestionPageView";
 import CollabPageView from "./views/CollabPageView";
 import DeleteAccountPage from "./views/DeleteAccountPageView";
+import AdminConsoleView from "./views/AdminConsoleView";
 
 const App: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const App: React.FC = () => {
         <Route path="/questions" element={<QuestionPageView />} />
         <Route path="/collab" element={<CollabPageView />} />
         <Route path="/delete-account" element={<DeleteAccountPage />} />
+        <Route path="/adminconsole" element={<AdminConsoleView />} />
         <Route
           path="/create-account"
           element={<div>Create Account Page</div>}
