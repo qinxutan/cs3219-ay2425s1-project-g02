@@ -14,92 +14,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Pages } from '@/components/custom/Pages/Pages';
 
 const AdminConsoleView: React.FC = () => {
     
   const users = [
-    {
-      id: 1,
-      name: 'A',
-      age: 30,
-      occupation: 'None',
-      location: 'Nowhere',
-    },
-    {
-      id: 2,
-      name: 'B',
-      age: 25,
-      occupation: 'No',
-      location: 'Nah',
-    },
-    {
-      id: 3,
-      name: 'C',
-      age: 35,
-      occupation: 'Rice farmer',
-      location: 'Asia',
-    },
-    {
-      id: 1,
-      name: 'A',
-      age: 30,
-      occupation: 'None',
-      location: 'Nowhere',
-    },
-    {
-      id: 2,
-      name: 'B',
-      age: 25,
-      occupation: 'No',
-      location: 'Nah',
-    },
-    {
-      id: 3,
-      name: 'C',
-      age: 35,
-      occupation: 'Rice farmer',
-      location: 'Asia',
-    },
-    {
-      id: 1,
-      name: 'A',
-      age: 30,
-      occupation: 'None',
-      location: 'Nowhere',
-    },
-    {
-      id: 2,
-      name: 'B',
-      age: 25,
-      occupation: 'No',
-      location: 'Nah',
-    },
-    {
-      id: 3,
-      name: 'C',
-      age: 35,
-      occupation: 'Rice farmer',
-      location: 'Asia',
-    },
+    { id: 1, name: 'A', age: 30, occupation: 'None', location: 'Nowhere', },
+    { id: 2, name: 'B', age: 25, occupation: 'No', location: 'Nah', },
+    { id: 3, name: 'C', age: 35, occupation: 'Rice farmer', location: 'Asia', },
+    { id: 4, name: 'A', age: 30, occupation: 'None', location: 'Nowhere',  },
+    { id: 5, name: 'B', age: 25, occupation: 'No', location: 'Nah',  },
+    { id: 6, name: 'C', age: 35, occupation: 'Rice farmer', location: 'Asia', },
+    { id: 7, name: 'A', age: 30, occupation: 'None', location: 'Nowhere', },
+    { id: 8, name: 'B', age: 25, occupation: 'No', location: 'Nah', },
+    { id: 9, name: 'C', age: 35, occupation: 'Rice farmer', location: 'Asia', },
   ];
     
     return (
-      <div>
+      <div className="w-full overflow-x-auto">
         <h1>Admin Console</h1>
-        <p>Welcome to the console!</p>
-        <Table>
-          {/* <thead>
-            <tr>
-              <th>Select</th>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Age</th>
-              <th>Occupation</th>
-              <th>Location</th>
-              <th>Actions</th>
-            </tr>
-          </thead> */}
-
+        <Table className="w-full border-collapse border border-gray-300">
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">Select</TableHead>
@@ -153,6 +87,9 @@ const AdminConsoleView: React.FC = () => {
                       <DropdownMenu.Item onClick={() => alert(`Editing ${user.name}`)}>
                         Edit
                       </DropdownMenu.Item>
+                      <DropdownMenu.Item onClick={() => alert(`Ressting ${user.name}'s password`)}>
+                        Reset password...
+                      </DropdownMenu.Item>
                       <DropdownMenu.Item onClick={() => alert(`Deleting ${user.name}`)}>
                         Delete
                       </DropdownMenu.Item>
@@ -163,6 +100,7 @@ const AdminConsoleView: React.FC = () => {
             ))}
           </TableBody>
       </Table>
+      <Pages />
     </div>
       
     );

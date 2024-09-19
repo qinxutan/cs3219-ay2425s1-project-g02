@@ -8,6 +8,7 @@ import CollabPageView from "./views/CollabPageView";
 import DeleteAccountPage from "./views/DeleteAccountPageView";
 import AdminConsoleView from "./views/AdminConsoleView";
 
+
 const App: React.FC = () => {
   return (
     <BrowserRouter>
