@@ -46,8 +46,12 @@ const DeleteAccountPage: React.FC = () => {
         await deleteUser(userCredential.user); // Delete the authenticated user
         navigate("/"); // Redirect to home page after deletion
       }
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An error occurred. Please try again.");
+      }
     }
   };
 
