@@ -7,8 +7,6 @@ import QuestionPageView from "./views/QuestionPageView";
 import CreateAccountPageView from "./views/CreateAccountPageView";
 import CollabPageView from "./views/CollabPageView";
 import DeleteAccountPage from "./views/DeleteAccountPageView";
-import AdminConsoleView from "./views/AdminConsoleView";
-
 
 const App: React.FC = () => {
   return (
@@ -20,7 +18,6 @@ const App: React.FC = () => {
         <Route path="/create-account" element={<CreateAccountPageView />} />
         <Route path="/collab" element={<CollabPageView />} />
         <Route path="/delete-account" element={<DeleteAccountPage />} />
-        <Route path="/adminconsole" element={<AdminConsoleView />} />
         <Route path="*" element={<p>404: Page Not Found!</p>} />
       </Routes>
     </BrowserRouter>
