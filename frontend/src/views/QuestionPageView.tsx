@@ -37,7 +37,10 @@ const QuestionPageView: React.FC = () => {
               <Button
                 variant="ghost"
                 className="w-full text-left"
-                onClick={() => handleNavigation("/")}
+                onClick={() => {
+                  localStorage.removeItem("authToken"); // Clear the token
+                  handleNavigation("/"); // Navigate to the home page
+                }}
               >
                 Logout
               </Button>
