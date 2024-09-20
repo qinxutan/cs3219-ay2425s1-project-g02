@@ -6,7 +6,11 @@ const authenticateToken = async (req, res, next) => {
 
   try {
     // Verify token with user service
-    const response = await fetch('http://localhost:5001/verify-token', {
+    // Being inside a container, we are unable to derive the host port mapping (unless we use environment variables),
+    // and thus, we must choose either to fetch 
+    // 'http://user_service:5001/verify-token' for production purposes or'http://localhost:5001/verify-token' for development purposes.
+    // In this case, we choose to fetch for production purposes, and thus, the development server (5173) can't fully function anymore.
+    const response = await fetch('http://user_service:5001/verify-token', { 
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
