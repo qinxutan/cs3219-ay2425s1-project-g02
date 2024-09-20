@@ -5,11 +5,11 @@ const authenticateToken = async (req, res, next) => {
   if (token == null) return res.status(401).json({ message: 'Token required' });
 
   try {
-    // Verify token with user service
-    // Being inside a container, we are unable to derive the host port mapping (unless we use environment variables),
-    // and thus, we must choose either to fetch 
-    // 'http://user_service:5001/verify-token' for production purposes or'http://localhost:5001/verify-token' for development purposes.
-    // In this case, we choose to fetch for production purposes, and thus, the development server (5173) can't fully function anymore.
+    // Verify the token with the user service.
+    // When running in a containerized environment, we cannot directly access host port mappings without environment variables.
+    // Therefore, unless we choose to use environment variables, we must choose between using 'http://user_service:5001/verify-token' for production or 'http://localhost:5001/verify-token' for development.
+    // In this implementation, we opt for the production URL, which means our development ways of setting up won't work with the question service anymore.
+    // Consequently, to run the application, we must use 'docker-compose up -d' instead of starting individual containers or using development commands like 'npm run dev' for the frontend and 'node server.js' for the backend.
     const response = await fetch('http://user_service:5001/verify-token', { 
       method: 'POST',
       headers: {
