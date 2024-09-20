@@ -6,7 +6,7 @@ const authenticateToken = async (req, res, next) => {
 
   try {
     // Verify token with user service
-    const response = await fetch('http://localhost:5001/api/verify-token', {
+    const response = await fetch('http://localhost:5001/verify-token', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
