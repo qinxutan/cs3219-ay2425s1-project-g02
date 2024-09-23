@@ -1,7 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-const app = express();
+const app = require("./app");
 const server = http.createServer(app);
 
 const io = socketIo(server, {
@@ -44,12 +44,14 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(5001, (err) => {
+const port = 5004;
+
+server.listen(5004, (err) => {
   if (err) {
     console.error('Error starting server:', err);
     return;
   }
-  console.log('Server is running on port 5001');
+  console.log(`Server is running on port ${port}`);
   console.log('Listening for WebSocket connections...');
 });
 
