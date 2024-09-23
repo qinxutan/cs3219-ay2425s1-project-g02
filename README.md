@@ -10,4 +10,4 @@ docker compose build
 docker compose up -d
 ```
 
-Access the frontend at `localhost:3000` and the question service (backend) at `localhost:5001`.
+Access the frontend at `localhost:3000`, the user service (backend) at `localhost:5001` and the question service (backend) at `localhost:5002`.
