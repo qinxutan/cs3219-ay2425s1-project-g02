@@ -38,7 +38,7 @@ const customQuestion: Question = {
 };
 
 function CollabPageView() {
-  const [code, setCode] = useState(""); // For the textarea value
+  const [code, setCode] = useState("");
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
@@ -48,13 +48,13 @@ function CollabPageView() {
 
     newSocket.on("connect", () => {
       console.log("WebSocket connected");
-      newSocket.emit("joinSession", "session123"); // Make sure to join the session
+      newSocket.emit("joinSession", "session123");
     });
     
     // Listen for code updates from the server
     newSocket.on("codeUpdated", (data) => {
       console.log("Code update received from server:", data);
-      setCode(data.code); // Update the textarea with the new code
+      setCode(data.code);
     });
 
     return () => {
