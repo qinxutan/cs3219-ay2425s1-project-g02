@@ -55,8 +55,15 @@ export async function callFunction(
       throw new Error(`Error: ${response.status} - ${response.statusText}`);
     }
 
-    // Parse and return the JSON data
-    const result = await response.json();
+    // Check for empty response
+    const data = await response.text();
+
+    if (!data) {
+      return { success: true };
+    }
+
+    // Parse the JSON data
+    const result = JSON.parse(data);
 
     return { success: true, data: result };
   } catch (error: any) {
