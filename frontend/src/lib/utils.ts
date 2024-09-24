@@ -28,29 +28,42 @@ export function isSubset<T>(subset: Set<T>, superset: Set<T>): boolean {
   return true; // Return true if all elements are found
 }
 
+// Utility function for faking delaying execution
+export const delay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
 // Utility function for making fetch requests with credentials
 export async function callFunction(
   functionName: string,
-  method: string = "GET"
+  method: string = "GET",
+  body?: any
 ): Promise<SuccessObject> {
   try {
     const url = `${questionServiceBackendUrl}/${functionName}`;
     const token = localStorage.getItem("authToken");
-    console.log(token)
+    console.log(token);
 
     const response = await fetch(url, {
       method,
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify(body),
     });
     if (!response.ok) {
       throw new Error(`Error: ${response.status} - ${response.statusText}`);
     }
 
-    // Parse and return the JSON data
-    const result = await response.json();
+    // Check for empty response
+    const data = await response.text();
+
+    if (!data) {
+      return { success: true };
+    }
+
+    // Parse the JSON data
+    const result = JSON.parse(data);
 
     return { success: true, data: result };
   } catch (error: any) {
