@@ -20,5 +20,4 @@ app.use(bodyParser.json()); // Parse JSON request bodies
 // Routes
 app.use('/', userRoutes);
 
-
 module.exports = app;

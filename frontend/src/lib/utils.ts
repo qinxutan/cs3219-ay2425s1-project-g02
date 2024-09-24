@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-const backendUrl = "http://localhost:5001";
+const questionServiceBackendUrl = "http://localhost:5002";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -34,10 +34,16 @@ export async function callFunction(
   method: string = "GET"
 ): Promise<SuccessObject> {
   try {
-    const url = `${backendUrl}/${functionName}`;
+    const url = `${questionServiceBackendUrl}/${functionName}`;
+    const token = localStorage.getItem("authToken");
+    console.log(token)
 
     const response = await fetch(url, {
       method,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
     });
     if (!response.ok) {
       throw new Error(`Error: ${response.status} - ${response.statusText}`);
