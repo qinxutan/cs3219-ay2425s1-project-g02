@@ -25,5 +25,5 @@ The PeerPrep backend provides a service for managing and querying questions used
    docker run -d -p 5001:5001 --name peerprep-backend-app peerprep-backend
    ```
 
-4. **You can find the server started at localhost:5001**
+4. **You can find the server started at localhost:5004**
 
