@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import io, { Socket } from "socket.io-client";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 
 const customQuestion: Question = {
 	id: "q123",
@@ -86,26 +87,44 @@ function CollabPageView() {
 				height: "100vh", // Full viewport height
 			}}
 		>
-			{/* <textarea
-				value={code}
-				onChange={handleCodeChange}
-				className="fixed bottom-4 right-4 w-64 h-32 p-2 border rounded-md bg-white text-black"
-				placeholder="Type code here..."
-			/> */}
 			<div
 				style={{
 					flex: 1, // Takes up equal space as the textarea
 					display: "flex",
-					alignItems: "center", // Centers the title vertically
-					justifyContent: "center", // Centers the title horizontally
+					flexDirection: "column", // Stacks the title and description vertically
+					alignItems: "flex-start", // Aligns the title and description to the left
+					padding: "20px",
 					border: "5px solid black", // Adds a border
 				}}
 			>
-				<QuestionDialog question={customQuestion} />
+				{/* title */}
+				{/* <QuestionDialog question={customQuestion} /> */}
+				<h2 style={{ fontSize: "2rem", fontWeight: "bold" }}>{customQuestion.title}</h2>
+
+				{/* tags (difficulty & topics) */}
+				<div
+					style={{
+						marginTop: "10px",
+						marginBottom: "10px",
+						display: "flex",
+						flexWrap: "wrap",
+						gap: "10px",
+					}}
+				>
+					<Badge>{customQuestion.difficulty}</Badge>
+					{customQuestion.topics.map((topic, index) => (
+						<Badge key={index} variant="outline">
+							{topic}
+						</Badge>
+					))}
+				</div>
+
+        {/* description */}
+				<p>{customQuestion.description}</p>
 			</div>
 			<div
 				style={{
-					flex: 1, // Takes up equal space as the title section
+					flex: 1, // Takes up equal space as the question section
 					display: "flex",
 					flexDirection: "column", // Stacks the label and textarea vertically
 					justifyContent: "center", // Centers the textarea horizontally within its section
@@ -128,6 +147,8 @@ function CollabPageView() {
     }
 }"
 					id="message"
+					value={code}
+					onChange={handleCodeChange}
 				/>
 			</div>
 		</main>
