@@ -125,10 +125,10 @@ function CollabPageView() {
 				<p>{customQuestion.description}</p>
 
 				{/* examples */}
-				<div style={{marginTop: "35px"}}>
+				<div style={{ marginTop: "35px" }}>
 					{customQuestion.examples.map((example, index) => (
 						<div key={index} style={{ marginBottom: "20px" }}>
-							<p style={{marginBottom: "10px"}}>
+							<p style={{ marginBottom: "10px" }}>
 								<strong>Example {index + 1}:</strong>
 							</p>
 							<div
@@ -139,7 +139,10 @@ function CollabPageView() {
 								}}
 							>
 								<blockquote
-									style={{ paddingLeft: "10px", borderLeft: "5px solid #d0d7de" }}
+									style={{
+										paddingLeft: "10px",
+										borderLeft: "5px solid #d0d7de",
+									}}
 								>
 									<pre>
 										<strong>Input:</strong> {example.input}
@@ -151,6 +154,16 @@ function CollabPageView() {
 							</div>
 						</div>
 					))}
+
+					{/* constraints */}
+					<div style={{ marginTop: "35px" }}>
+						<strong>Constraints:</strong>
+						<ul style={{ listStyleType: "disc", paddingLeft: "20px" }}>
+							{customQuestion.constraints.map((constraint, index) => (
+								<li key={index}>{constraint}</li>
+							))}
+						</ul>
+					</div>
 				</div>
 			</div>
 			<div
