@@ -97,15 +97,17 @@ function CollabPageView() {
 					border: "5px solid black", // Adds a border
 				}}
 			>
-				{/* title */}
+				{/* id & title */}
 				{/* <QuestionDialog question={customQuestion} /> */}
-				<h2 style={{ fontSize: "2rem", fontWeight: "bold" }}>{customQuestion.title}</h2>
+				<h2 style={{ fontSize: "2rem", fontWeight: "bold" }}>
+					{customQuestion.id}. {customQuestion.title}
+				</h2>
 
 				{/* tags (difficulty & topics) */}
 				<div
 					style={{
-						marginTop: "10px",
-						marginBottom: "10px",
+						marginTop: "15px",
+						marginBottom: "15px",
 						display: "flex",
 						flexWrap: "wrap",
 						gap: "10px",
@@ -119,8 +121,37 @@ function CollabPageView() {
 					))}
 				</div>
 
-        {/* description */}
+				{/* description */}
 				<p>{customQuestion.description}</p>
+
+				{/* examples */}
+				<div style={{marginTop: "35px"}}>
+					{customQuestion.examples.map((example, index) => (
+						<div key={index} style={{ marginBottom: "20px" }}>
+							<p style={{marginBottom: "10px"}}>
+								<strong>Example {index + 1}:</strong>
+							</p>
+							<div
+								style={{
+									display: "flex",
+									flexDirection: "column",
+									gap: "10px",
+								}}
+							>
+								<blockquote
+									style={{ paddingLeft: "10px", borderLeft: "5px solid #d0d7de" }}
+								>
+									<pre>
+										<strong>Input:</strong> {example.input}
+									</pre>
+									<pre>
+										<strong>Output:</strong> {example.output}
+									</pre>
+								</blockquote>
+							</div>
+						</div>
+					))}
+				</div>
 			</div>
 			<div
 				style={{
