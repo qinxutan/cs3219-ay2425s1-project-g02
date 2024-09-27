@@ -1,4 +1,3 @@
-import QuestionDialog from "@/components/custom/Question/QuestionDialog";
 import { Difficulty, Question, Topic } from "@/models/Question";
 import { useState, useEffect } from "react";
 import io, { Socket } from "socket.io-client";
@@ -94,11 +93,12 @@ function CollabPageView() {
 					flexDirection: "column", // Stacks the title and description vertically
 					alignItems: "flex-start", // Aligns the title and description to the left
 					padding: "20px",
-					border: "5px solid black", // Adds a border
+					border: "2px solid lightgrey", // Adds a border
+					borderRadius: "10px", // Rounds the corners
+					margin: "15px 7.5px 15px 15px", // top right bottom left (clockwise)
 				}}
 			>
 				{/* id & title */}
-				{/* <QuestionDialog question={customQuestion} /> */}
 				<h2 style={{ fontSize: "2rem", fontWeight: "bold" }}>
 					{customQuestion.id}. {customQuestion.title}
 				</h2>
@@ -173,8 +173,10 @@ function CollabPageView() {
 					flexDirection: "column", // Stacks the label and textarea vertically
 					justifyContent: "center", // Centers the textarea horizontally within its section
 					alignItems: "center", // Centers the textarea vertically within its section
-					border: "5px solid pink", // Adds a border
+					border: "2px solid lightgrey", // Adds a border
 					padding: "20px",
+					borderRadius: "10px", // Rounds the corners
+					margin: "15px 15px 15px 7.5px", // top right bottom left (clockwise)
 				}}
 			>
 				<Label
