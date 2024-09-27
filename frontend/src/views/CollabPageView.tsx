@@ -1,9 +1,10 @@
 import { Difficulty, Question, Topic } from "@/models/Question";
 import { useState, useEffect } from "react";
 import io, { Socket } from "socket.io-client";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Home } from "lucide-react";
 
 const customQuestion: Question = {
 	id: "q123",
@@ -81,121 +82,154 @@ function CollabPageView() {
 	return (
 		<main
 			style={{
+				height: "100vh",
+				width: "100vw",
 				display: "flex",
-				width: "100vw", // Full viewport width
-				height: "100vh", // Full viewport height
+				flexDirection: "column",
 			}}
 		>
+			{/* navigation menu */}
 			<div
 				style={{
-					flex: 1, // Takes up equal space as the textarea
-					display: "flex",
-					flexDirection: "column", // Stacks the title and description vertically
-					alignItems: "flex-start", // Aligns the title and description to the left
-					padding: "20px",
-					border: "2px solid lightgrey", // Adds a border
-					borderRadius: "10px", // Rounds the corners
-					margin: "15px 7.5px 15px 15px", // top right bottom left (clockwise)
+					display: "inline-flex", // Allows the container to shrink to fit its content
+					alignItems: "center", // Center vertically
+					margin: "15px 0px 0px 7px", // Add some margin
 				}}
 			>
-				{/* id & title */}
-				<h2 style={{ fontSize: "2rem", fontWeight: "bold" }}>
-					{customQuestion.id}. {customQuestion.title}
-				</h2>
-
-				{/* tags (difficulty & topics) */}
+				<Button variant="link">
+					<Home style={{ marginRight: "10px" }} />
+					Homepage
+				</Button>
 				<div
 					style={{
-						marginTop: "15px",
-						marginBottom: "15px",
+						height: "24px",
+						width: "1px",
+						backgroundColor: "lightgrey",
+						margin: "0 10px",
+					}}
+				/>
+				<Button variant="link">Quit Session</Button>
+			</div>
+
+			{/* left side question box */}
+			<div style={{ display: "flex", flex: 1 }}>
+				<div
+					style={{
+						flex: 1, // Takes up equal space as the textarea
 						display: "flex",
-						flexWrap: "wrap",
-						gap: "10px",
+						flexDirection: "column", // Stacks the title and description vertically
+						alignItems: "flex-start", // Aligns the title and description to the left
+						padding: "20px",
+						border: "2px solid lightgrey", // Adds a border
+						borderRadius: "10px", // Rounds the corners
+						margin: "15px 7.5px 15px 15px", // top right bottom left (clockwise)
 					}}
 				>
-					<Badge>{customQuestion.difficulty}</Badge>
-					{customQuestion.topics.map((topic, index) => (
-						<Badge key={index} variant="outline">
-							{topic}
-						</Badge>
-					))}
-				</div>
+					{/* id & title */}
+					<h2 style={{ fontSize: "2rem", fontWeight: "bold" }}>
+						{customQuestion.id}. {customQuestion.title}
+					</h2>
 
-				{/* description */}
-				<p>{customQuestion.description}</p>
+					{/* tags (difficulty & topics) */}
+					<div
+						style={{
+							marginTop: "15px",
+							marginBottom: "15px",
+							display: "flex",
+							flexWrap: "wrap",
+							gap: "10px",
+						}}
+					>
+						<Badge>{customQuestion.difficulty}</Badge>
+						{customQuestion.topics.map((topic, index) => (
+							<Badge key={index} variant="outline">
+								{topic}
+							</Badge>
+						))}
+					</div>
 
-				{/* examples */}
-				<div style={{ marginTop: "35px" }}>
-					{customQuestion.examples.map((example, index) => (
-						<div key={index} style={{ marginBottom: "20px" }}>
-							<p style={{ marginBottom: "10px" }}>
-								<strong>Example {index + 1}:</strong>
-							</p>
-							<div
-								style={{
-									display: "flex",
-									flexDirection: "column",
-									gap: "10px",
-								}}
-							>
-								<blockquote
+					{/* description */}
+					<p>{customQuestion.description}</p>
+
+					{/* examples */}
+					<div style={{ marginTop: "35px" }}>
+						{customQuestion.examples.map((example, index) => (
+							<div key={index} style={{ marginBottom: "20px" }}>
+								<p style={{ marginBottom: "10px" }}>
+									<strong>Example {index + 1}:</strong>
+								</p>
+								<div
 									style={{
-										paddingLeft: "10px",
-										borderLeft: "5px solid #d0d7de",
+										display: "flex",
+										flexDirection: "column",
+										gap: "10px",
 									}}
 								>
-									<pre>
-										<strong>Input:</strong> {example.input}
-									</pre>
-									<pre>
-										<strong>Output:</strong> {example.output}
-									</pre>
-								</blockquote>
+									<blockquote
+										style={{
+											paddingLeft: "10px",
+											borderLeft: "5px solid #d0d7de",
+										}}
+									>
+										<pre>
+											<strong>Input:</strong> {example.input}
+										</pre>
+										<pre>
+											<strong>Output:</strong> {example.output}
+										</pre>
+									</blockquote>
+								</div>
 							</div>
-						</div>
-					))}
+						))}
 
-					{/* constraints */}
-					<div style={{ marginTop: "35px" }}>
-						<strong>Constraints:</strong>
-						<ul style={{ listStyleType: "disc", paddingLeft: "20px" }}>
-							{customQuestion.constraints.map((constraint, index) => (
-								<li key={index}>{constraint}</li>
-							))}
-						</ul>
+						{/* constraints */}
+						<div style={{ marginTop: "35px" }}>
+							<strong>Constraints:</strong>
+							<ul style={{ listStyleType: "disc", paddingLeft: "20px" }}>
+								{customQuestion.constraints.map((constraint, index) => (
+									<li key={index}>{constraint}</li>
+								))}
+							</ul>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div
-				style={{
-					flex: 1, // Takes up equal space as the question section
-					display: "flex",
-					flexDirection: "column", // Stacks the label and textarea vertically
-					justifyContent: "center", // Centers the textarea horizontally within its section
-					alignItems: "center", // Centers the textarea vertically within its section
-					border: "2px solid lightgrey", // Adds a border
-					padding: "20px",
-					borderRadius: "10px", // Rounds the corners
-					margin: "15px 15px 15px 7.5px", // top right bottom left (clockwise)
-				}}
-			>
-				<Label
-					htmlFor="message"
-					style={{ alignSelf: "flex-start", marginBottom: "10px" }}
+
+				{/* right side textarea */}
+				<div
+					style={{
+						flex: 1, // Takes up equal space as the question section
+						display: "flex",
+						flexDirection: "column", // Stacks the label and textarea vertically
+						justifyContent: "center", // Centers the textarea horizontally within its section
+						alignItems: "center", // Centers the textarea vertically within its section
+						border: "2px solid lightgrey", // Adds a border
+						padding: "20px",
+						borderRadius: "10px", // Rounds the corners
+						margin: "15px 15px 15px 7.5px", // top right bottom left (clockwise)
+					}}
 				>
-					Code
-				</Label>
-				<Textarea
-					style={{ height: "100%" }}
-					placeholder="class Solution {
+					<h2
+						style={{
+							fontSize: "1.25rem",
+							fontWeight: "bold",
+							alignSelf: "flex-start",
+							marginBottom: "10px",
+						}}
+					>
+						Code
+					</h2>
+					<Textarea
+						style={{ height: "100%" }}
+						placeholder="class Solution {
     public int[] main(int param1, int param2) {
         
     }
 }"
-					id="message"
-					value={code}
-					onChange={handleCodeChange}
-				/>
+						id="message"
+						value={code}
+						onChange={handleCodeChange}
+					/>
+				</div>
 			</div>
 		</main>
 	);
