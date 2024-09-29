@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-const questionServiceBackendUrl = "http://localhost:5002";
+const questionServiceBackendUrl = import.meta.env.VITE_QUESTION_SERVICE_BACKEND_URL || "http://localhost:5002";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
