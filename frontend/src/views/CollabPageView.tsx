@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Home } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const customQuestion: Question = {
 	id: "q123",
@@ -43,6 +44,7 @@ const customQuestion: Question = {
 function CollabPageView() {
 	const [code, setCode] = useState("");
 	const [socket, setSocket] = useState<Socket | null>(null);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		// Initialize the WebSocket connection when the component mounts
@@ -79,6 +81,13 @@ function CollabPageView() {
 		}
 	};
 
+	// Handle Quit Session button click
+	const handleQuitSession = () => {
+		// Send a request to the backend to terminate the session (optional)
+		// navigate back to /questions
+		navigate("/questions");
+	};
+
 	return (
 		<main
 			style={{
@@ -108,7 +117,9 @@ function CollabPageView() {
 						margin: "0 10px",
 					}}
 				/>
-				<Button variant="link">Quit Session</Button>
+				<Button variant="link" onClick={handleQuitSession}>
+					Quit Session
+				</Button>
 			</div>
 
 			{/* left side question box */}
