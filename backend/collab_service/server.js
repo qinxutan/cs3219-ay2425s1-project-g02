@@ -38,6 +38,15 @@ io.on('connection', (socket) => {
     console.log(`Code updated in session ${sessionId}: ${code}`);
   });
 
+  socket.on('sendMessage', (data) => {
+    const { sessionId, message } = data;
+    // Broadcast message with username (socket ID) to all users in the session
+    io.to(sessionId).emit('messageReceived', {
+      username: socket.id, // Username will be the socket ID
+      message
+    });
+  });
+
   // Handle disconnect
   socket.on('disconnect', () => {
     console.log('A user disconnected:', socket.id);

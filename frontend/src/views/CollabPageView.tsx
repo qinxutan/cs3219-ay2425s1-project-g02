@@ -44,6 +44,8 @@ const customQuestion: Question = {
 function CollabPageView() {
 	const [code, setCode] = useState("");
 	const [socket, setSocket] = useState<Socket | null>(null);
+	const [message, setMessage] = useState(""); // For new message input
+	const [messages, setMessages] = useState<{ username: string; message: string }[]>([]); // For chat history
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -62,6 +64,10 @@ function CollabPageView() {
 			setCode(data.code);
 		});
 
+		newSocket.on("messageReceived", (data) => {
+			setMessages((prevMessages) => [...prevMessages, { username: data.username, message: data.message }]);
+		});
+
 		return () => {
 			newSocket.disconnect(); // Cleanup WebSocket connection on component unmount
 		};
@@ -78,6 +84,16 @@ function CollabPageView() {
 				sessionId: "session123", // Example session ID
 				code: newCode,
 			});
+		}
+	};
+
+	const handleMessageSend = () => {
+		if (message.trim() && socket) {
+			socket.emit("sendMessage", {
+				sessionId: "session123",
+				message: message.trim(),
+			});
+			setMessage(""); // Clear the input field
 		}
 	};
 
@@ -201,6 +217,44 @@ function CollabPageView() {
 									<li key={index}>{constraint}</li>
 								))}
 							</ul>
+						</div>
+					</div>
+					{/* Chatbox */}
+					<div
+						style={{
+							marginTop: "25px",
+							width: "100%",
+							border: "2px solid lightgrey",
+							borderRadius: "10px",
+							padding: "10px",
+						}}
+					>
+						<h3 style={{ marginBottom: "10px", fontWeight: "bold" }}>Chat</h3>
+						<div
+							style={{
+								height: "200px",
+								overflowY: "scroll",
+								border: "1px solid #d0d7de",
+								borderRadius: "5px",
+								padding: "10px",
+								marginBottom: "10px",
+								backgroundColor: "#f9f9f9",
+							}}
+						>
+							{messages.map((msg, index) => (
+								<p key={index} style={{ margin: "5px 0" }}>
+									<strong>User {msg.username}:</strong> {msg.message}
+								</p>
+							))}
+						</div>
+						<div style={{ display: "flex", gap: "10px" }}>
+							<Textarea
+								style={{ flex: 1 }}
+								value={message}
+								onChange={(e) => setMessage(e.target.value)}
+								placeholder="Type your message here..."
+							/>
+							<Button onClick={handleMessageSend}>Send</Button>
 						</div>
 					</div>
 				</div>
