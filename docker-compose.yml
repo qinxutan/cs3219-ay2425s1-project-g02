@@ -18,12 +18,25 @@ services:
       - app-network 
     depends_on:
       - user_service
+  
+  collab_service:
+    build: 
+      context: ./backend/collab_service # Path to the directory containing the Dockerfile for building the question service image.
+      args:
+        USER_SERVICE_BACKEND_URL: ${USER_SERVICE_BACKEND_URL}
+    ports:
+      - 5004:5004 # Maps port 5002 on the host to port 5002 in the container, making the app accessible on the host.
+    networks:
+      - app-network 
+    depends_on:
+      - user_service
 
   frontend:
     build: 
       context: ./frontend
       args: 
         VITE_QUESTION_SERVICE_BACKEND_URL: ${VITE_QUESTION_SERVICE_BACKEND_URL}
+        VITE_COLLAB_SERVICE_BACKEND_URL: ${VITE_COLLAB_SERVICE_BACKEND_URL}
     ports:
       - 3000:80
     networks:

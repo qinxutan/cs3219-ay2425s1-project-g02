@@ -46,7 +46,7 @@ const CollabPageView: React.FC = () => {
 	const [socket, setSocket] = useState<Socket | null>(null);
 	const [message, setMessage] = useState(""); // For new message input
 	const [messages, setMessages] = useState<{ username: string; message: string }[]>([]);
-	const [sessionId, setSessionId] = useState<string>(""); // State to manage sessionId
+	const [sessionId, setSessionId] = useState<string>("session123"); // State to manage sessionId
     const [userId, setUserId] = useState<string>(""); // State to manage userId
 	const navigate = useNavigate();
 
@@ -115,7 +115,7 @@ const CollabPageView: React.FC = () => {
 	// Handle Quit Session button click
 	const handleQuitSession = () => {
 		if (socket) {
-			socket.emit("terminateSession", { sessionId, userId });
+			socket.emit("terminateSession", sessionId);
 		  }
 		navigate("/questions");
 	};

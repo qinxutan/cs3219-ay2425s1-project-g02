@@ -2,7 +2,8 @@ const { db } = require('../config/firebaseConfig');
 
 class CollabController {
   joinSession = async (req, res) => {
-    const { sessionId, userId } = req.body;
+    const { sessionId } = req.body;
+    const userId = req.socket.id;
 
     try {
       const sessionRef = db.collection('sessions').doc(sessionId);

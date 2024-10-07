@@ -3,7 +3,6 @@ const http = require('http');
 const socketIo = require('socket.io');
 const app = require("./app");
 const server = http.createServer(app);
-const { db } = require('./config/firebaseConfig');
 
 const io = socketIo(server, {
     cors: {
@@ -29,7 +28,7 @@ io.on('connection', (socket) => {
   socket.on('joinSession', ({ sessionId, userId }) => {
     socket.join(sessionId);
     console.log(`User ${userId} joined session ${sessionId}`);
-    socket.userId = userId;
+    userId = socket.id;
 
     // Emit the sessionId and userId back to the client
     socket.emit('sessionJoined', { sessionId, userId });
@@ -46,23 +45,14 @@ io.on('connection', (socket) => {
   socket.on('sendMessage', (data) => {
     const { sessionId, message } = data;
     io.to(sessionId).emit('messageReceived', {
-      username: socket.userId, // Use userId instead of socket.id
+      username: socket.id,
       message
     });
   });
 
   socket.on('terminateSession', (sessionId) => {
     // Notify all users in the session except the one who terminated it
-    socket.to(sessionId).emit('sessionTerminated', { userId: socket.userId });
-
-    // Optionally, you can terminate the session by removing it from the database
-    db.collection('sessions').doc(sessionId).delete()
-        .then(() => {
-            console.log(`Session ${sessionId} terminated by user ${userId}`);
-        })
-        .catch((error) => {
-            console.error('Error terminating session:', error);
-        });
+    socket.to(sessionId).emit('sessionTerminated', { userId: socket.id });
 });
 
   // Handle disconnect
