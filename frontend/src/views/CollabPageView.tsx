@@ -41,11 +41,13 @@ const customQuestion: Question = {
 	],
 };
 
-function CollabPageView() {
+const CollabPageView: React.FC = () => {
 	const [code, setCode] = useState("");
 	const [socket, setSocket] = useState<Socket | null>(null);
 	const [message, setMessage] = useState(""); // For new message input
-	const [messages, setMessages] = useState<{ username: string; message: string }[]>([]); // For chat history
+	const [messages, setMessages] = useState<{ username: string; message: string }[]>([]);
+	const [sessionId, setSessionId] = useState<string>(""); // State to manage sessionId
+    const [userId, setUserId] = useState<string>(""); // State to manage userId
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -55,14 +57,27 @@ function CollabPageView() {
 
 		newSocket.on("connect", () => {
 			console.log("WebSocket connected");
-			newSocket.emit("joinSession", "session123");
+			newSocket.emit("joinSession", { sessionId, userId });
 		});
+
+		newSocket.on('sessionJoined', ({ sessionId, userId }) => {
+            console.log(`Joined session: ${sessionId} with userId: ${userId}`);
+            setSessionId(sessionId);
+            setUserId(userId); 
+        });
 
 		// Listen for code updates from the server
 		newSocket.on("codeUpdated", (data) => {
 			console.log("Code update received from server:", data);
 			setCode(data.code);
 		});
+
+		newSocket.on('sessionTerminated', ({ userId }) => {
+			console.log(`Session terminated by user with ID: ${userId}`);
+			alert(`Session has been terminated by user ${userId}`);
+			navigate("/questions"); // Redirect to questions page
+		});
+	
 
 		newSocket.on("messageReceived", (data) => {
 			setMessages((prevMessages) => [...prevMessages, { username: data.username, message: data.message }]);
@@ -81,7 +96,7 @@ function CollabPageView() {
 		if (socket) {
 			console.log("Emitting code update:", newCode);
 			socket.emit("codeUpdate", {
-				sessionId: "session123", // Example session ID
+				sessionId, // Example session ID
 				code: newCode,
 			});
 		}
@@ -90,7 +105,7 @@ function CollabPageView() {
 	const handleMessageSend = () => {
 		if (message.trim() && socket) {
 			socket.emit("sendMessage", {
-				sessionId: "session123",
+				sessionId,
 				message: message.trim(),
 			});
 			setMessage(""); // Clear the input field
@@ -99,8 +114,9 @@ function CollabPageView() {
 
 	// Handle Quit Session button click
 	const handleQuitSession = () => {
-		// Send a request to the backend to terminate the session (optional)
-		// navigate back to /questions
+		if (socket) {
+			socket.emit("terminateSession", { sessionId, userId });
+		  }
 		navigate("/questions");
 	};
 
