@@ -36,6 +36,7 @@ services:
       context: ./frontend
       args:
         VITE_QUESTION_SERVICE_BACKEND_URL: ${VITE_QUESTION_SERVICE_BACKEND_URL}
+        VITE_MATCHING_SERVICE_BACKEND_URL: ${VITE_MATCHING_SERVICE_BACKEND_URL}
     ports:
       - 3000:80
     networks:
