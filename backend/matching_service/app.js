@@ -3,12 +3,33 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const testRoutes = require("./routes/testRoutes");
 const firebaseConfig = require("./config/firebaseConfig"); // Ensure Firebase is initialized
-const authenticateToken = require("./middleware/authenticateToken");
-const { createServer } = require("node:http");
+const {
+  authenticateToken,
+  authenticateTokenSocket,
+} = require("./middleware/authenticateToken");
+const { createServer } = require("http"); // Use 'http' instead of 'node:http'
 const { Server } = require("socket.io");
 const { SocketController } = require("./controllers/socketController");
+
+// Initialize Express app
 const app = express();
+
+// Apply middleware
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://localhost:5173"],
+    credentials: true,
+  })
+);
+
+app.use(authenticateToken);
+app.use(bodyParser.json());
+app.use("/test", testRoutes);
+
+// Create HTTP server
 const server = createServer(app);
+
+// Create Socket.IO server with CORS support
 const io = new Server(server, {
   cors: {
     origin: ["http://localhost:3000", "http://localhost:5173"],
@@ -16,32 +37,16 @@ const io = new Server(server, {
   },
 }).of("/matching");
 
-// Allow requests from http://localhost:3000 (docker compose frontend), and http://localhost:5173 (development frontend) with credentials
-app.use(
-  cors({
-    origin: ["http://localhost:3000", "http://localhost:5173"],
-    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
-  })
-);
+// Use the authenticateToken middleware for Socket.IO connections
+io.use(authenticateTokenSocket);
 
-// Handle preflight requests for all routes
-app.options("*", cors());
-
-// Middleware
-app.use(authenticateToken); // Verifies user authenticity, stops here if it fails to verify
-app.use(bodyParser.json()); // Parse JSON request bodies
-
-// Routes
-app.use("/", testRoutes);
-
+// Instantiate the SocketController
 const controller = new SocketController();
 
-server.listen(5004, () => {
-  console.log("server running at http://localhost:5004");
-});
-
+// Handle Socket.IO connections
 io.on("connection", (socket) => {
   controller.handleConnection(socket);
 });
 
-module.exports = app;
+// Export the server if needed for testing or other purposes
+module.exports = server;
