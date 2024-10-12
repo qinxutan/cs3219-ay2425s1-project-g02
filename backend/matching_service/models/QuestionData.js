@@ -1,10 +1,10 @@
-export const Difficulty = Object.freeze({
+const Difficulty = Object.freeze({
   Easy: "Easy",
   Medium: "Medium",
   Hard: "Hard",
 });
 
-export const Topic = Object.freeze({
+const Topic = Object.freeze({
   Array: "Array",
   Strings: "Strings",
   LinkedLists: "Linked Lists",
@@ -21,3 +21,5 @@ export const Topic = Object.freeze({
   Math: "Math",
   Algorithms: "Algorithms",
 });
+
+module.exports = { Difficulty, Topic };

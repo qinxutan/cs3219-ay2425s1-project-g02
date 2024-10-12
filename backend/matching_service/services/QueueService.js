@@ -1,18 +1,35 @@
-import { Difficulty } from "../models/QuestionData";
-import { Topic } from "../models/QuestionData";
-import { Queue } from "../utils/Queue";
+const { Queue } = require("../utils/Queue");
+const { Difficulty } = require("../models/QuestionData");
+const { Topic } = require("../models/QuestionData");
 
-export class QueueService {
+class QueueService {
   constructor() {
+    /**
+     * @type {Map<string, Queue>} queues
+     */
     this.queues = new Map();
 
     // Create a queue for each difficulty and topic pair
-    for (const difficulty in Object.values(Difficulty)) {
-      for (const topic in Object.values(Topic)) {
-        const queueName = `${difficulty}_${topic}`;
-        this.queues.set(queueName, new Queue(queueName, difficulty, topic));
+    for (const difficulty of Object.keys(Difficulty)) {
+      for (const topic of Object.keys(Topic)) {
+        const queueName = this.getQueueName(difficulty, topic);
+        const queue = new Queue(queueName, difficulty, topic);
+        this.queues.set(queueName, queue);
       }
     }
+  }
+
+  matchUser(queueName, uid) {
+    console.log(`[QueueService] Matching user ${uid} in queue ${queueName}`);
+    const queue = this.queues.get(queueName);
+
+    return queue.matchUser(uid);
+  }
+
+  removeUserFromQueue(queueName, uid) {
+    const queue = this.queues.get(queueName);
+
+    return queue.removeUser(uid);
   }
 
   getQueue(queueName) {
@@ -22,10 +39,6 @@ export class QueueService {
   getQueueName(difficulty, topic) {
     return `${difficulty}_${topic}`;
   }
-
-  close() {
-    this.queues.forEach((queue) => {
-      queue.close();
-    });
-  }
 }
+
+module.exports = { QueueService };

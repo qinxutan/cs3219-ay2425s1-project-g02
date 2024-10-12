@@ -1,31 +1,54 @@
-import { Producer } from "./producer";
-
-export class Queue {
+class Queue {
   constructor(queueName, difficulty, topic) {
     this.queueName = queueName;
-
     this.difficulty = difficulty;
     this.topic = topic;
-
-    this.producer = new Producer(queueName);
+    this.waitingUid = null;
   }
 
-  async createSession(userA, userB) {
-    const sessionData = {
-      users: [userA, userB],
+  matchUser(uid) {
+    if (!this.waitingUid) {
+      console.log(`User ${uid}: Waiting for match...`);
+      this.waitingUid = uid;
+      return null;
+    }
+
+    console.log(`User ${uid} matched with ${this.waitingUid}`);
+
+    const sessionData = this.createSession(this.waitingUid, uid);
+
+    return sessionData;
+  }
+
+  removeUser(uid) {
+    if (this.waitingUid === uid) {
+      console.log(`User ${uid} removed from queue ${this.queueName}.`);
+      this.waitingUid = null;
+    }
+
+    return null;
+  }
+
+  createSession(prevUid, currUid) {
+    const questionData = {
       difficulty: this.difficulty,
       topic: this.topic,
       // question: Question
     };
+    const prevUserSessionData = {
+      uid: prevUid,
+      otherUid: currUid,
+      ...questionData,
+    };
 
-    // TODO: Logic to create Session
+    const currUserSessionData = {
+      uid: currUid,
+      otherUid: prevUid,
+      ...questionData,
+    };
 
-    const sessionId = 1; // Placeholder
-
-    return sessionId;
-  }
-
-  async close() {
-    this.producer.close();
+    return { prevUserSessionData, currUserSessionData };
   }
 }
+
+module.exports = { Queue };
