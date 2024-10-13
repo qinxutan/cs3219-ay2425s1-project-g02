@@ -16,7 +16,7 @@ const app = express();
 // Apply middleware
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5173"],
+    origin: ["https://frontend-1079323726684.asia-southeast1.run.app", "http://localhost:3000", "http://localhost:5173"],
     credentials: true,
   })
 );
@@ -30,7 +30,7 @@ const server = createServer(app);
 // Create Socket.IO server with CORS support
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:5173"],
+    origin: ["https://frontend-1079323726684.asia-southeast1.run.app", "http://localhost:3000", "http://localhost:5173"],
     credentials: true,
   },
 }).of("/matching");
