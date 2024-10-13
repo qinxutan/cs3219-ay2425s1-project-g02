@@ -1,7 +1,6 @@
 const cors = require("cors");
 const express = require("express");
 const bodyParser = require("body-parser");
-const testRoutes = require("./routes/testRoutes");
 const firebaseConfig = require("./config/firebaseConfig"); // Ensure Firebase is initialized
 const {
   authenticateToken,
@@ -24,7 +23,6 @@ app.use(
 
 app.use(authenticateToken);
 app.use(bodyParser.json());
-app.use("/test", testRoutes);
 
 // Create HTTP server
 const server = createServer(app);
