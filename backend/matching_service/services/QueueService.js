@@ -10,8 +10,8 @@ class QueueService {
     this.queues = new Map();
 
     // Create a queue for each difficulty and topic pair
-    for (const difficulty of Object.keys(Difficulty)) {
-      for (const topic of Object.keys(Topic)) {
+    for (const difficulty of Object.values(Difficulty)) {
+      for (const topic of Object.values(Topic)) {
         const queueName = this.getQueueName(difficulty, topic);
         const queue = new Queue(queueName, difficulty, topic);
         this.queues.set(queueName, queue);
