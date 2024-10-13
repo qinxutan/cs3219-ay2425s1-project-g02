@@ -34,10 +34,10 @@ const MatchingButton: React.FC<MatchingButtonProps> = ({ selectedDifficulty, sel
       }); 
 
       // Listen for events from backend
-      socketRef.current.on('matched', (sessionData: any) => {
+      socketRef.current.on('matched', (data: any) => {
         reset(); // Reset stopwatch
         setMatchFound(true);
-        console.log('Match found: ', sessionData);
+        console.log('Match found: ', data);
       });
 
       socketRef.current.on('matchmakingTimedOut', (timedOutMessage: any) => {
@@ -50,6 +50,12 @@ const MatchingButton: React.FC<MatchingButtonProps> = ({ selectedDifficulty, sel
         reset(); // Reset stopwatch
         setIsMatching(false);
         alert(doubleRequestMessage);
+      });
+
+      socketRef.current.on('noQuestionsFound', (noQuestionsFoundMessage: any) => {
+        reset(); // Reset stopwatch
+        setIsMatching(false);
+        alert(noQuestionsFoundMessage);
       });
 
       // Start matchmaking

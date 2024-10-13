@@ -12,6 +12,24 @@ const getAllQuestions = async (req, res) => {
   }
 };
 
+const getQuestionsOfTopicAndDifficulty = async (req, res) => {
+  try {
+    const { topic, difficulty } = req.body;
+    
+    if (!topic || !difficulty) {
+      return res.status(400).json({ message: 'Both topic and difficulty are required' });
+    }
+
+    const questionsRef = db.collection('questions');
+    const query = questionsRef.where('topics', 'array-contains', topic).where('difficulty', '==', difficulty);
+    const snapshot = await query.get();
+    const questions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.status(200).json(questions);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
 const createQuestion = async (req, res) => {
   try {
     const questionData = req.body;
@@ -72,4 +90,4 @@ const deleteQuestion = async (req, res) => {
   }
 }
 
-module.exports = { getAllQuestions, createQuestion, deleteQuestion };
+module.exports = { getAllQuestions, getQuestionsOfTopicAndDifficulty, createQuestion, deleteQuestion };
