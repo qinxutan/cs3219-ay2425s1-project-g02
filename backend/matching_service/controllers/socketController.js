@@ -8,43 +8,34 @@ class SocketController {
   }
 
   handleConnection(socket) {
-    socket.emit("connected", () =>
-      console.log("Connected to matching service")
-    );
+    // socket.emit("connected", () =>
+    //   console.log("Connected to matching service")
+    // );
 
     socket.on("startMatching", (data) =>
       this.handleStartMatching(socket, data)
     );
 
-    socket.on("disconnect", () => this.handleDisconnect(socket));
+    socket.on("cancelMatching", (uid) => this.handleCancelMatching(uid));
   }
 
   handleStartMatching(socket, { uid, difficulty, topic }) {
+    this.emitDoubleMatchingRequest(uid);
     this.removeExistingConnection(uid); // Remove any existing connections for this user
 
     // Add the socket to the map
     const queueName = this.queueService.getQueueName(difficulty, topic);
     this.socketMap.set(uid, { socket, queueName });
 
-    socket.emit("matching"); // Notify the user that matching has started
-
     const sessionData = this.queueService.matchUser(queueName, uid);
     if (sessionData) this.handleMatching(sessionData);
 
     // Set a timeout for matching
-    setTimeout(() => this.handleTimeout(socket), TIMEOUT_TIME);
+    setTimeout(() => this.handleTimeout(socket, uid), TIMEOUT_TIME);
   }
 
-  handleDisconnect(socket) {
-    console.log("Socket Disconnected");
-
-    const uid = this.findUidBySocket(socket);
-
-    if (uid) {
-      this.removeExistingConnection(uid);
-    } else {
-      socket.removeAllListeners();
-    }
+  handleCancelMatching(uid) {
+    this.removeExistingConnection(uid);
   }
 
   handleMatching(sessionData) {
@@ -60,13 +51,21 @@ class SocketController {
     currUserSocket.disconnect();
   }
 
-  handleTimeout(socket) {
+  handleTimeout(socket, uid) {
     if (!socket.disconnected) {
-      socket.emit("timeout");
+      socket.emit("matchmakingTimedOut", `Matchmaking timed out after ${TIMEOUT_TIME / 1000}s`);
       console.log(`timed out after ${TIMEOUT_TIME / 1000}s`);
 
-      socket.disconnect();
+      this.removeExistingConnection(uid);
     }
+  }
+
+  emitDoubleMatchingRequest(uid) {
+    const socketData = this.socketMap.get(uid);
+    if (!socketData) return;
+
+    const { socket, queueName } = socketData;
+    socket.emit("doubleMatchingRequest", "Double matching request detected, stopping current tab's matching request")
   }
 
   removeExistingConnection(uid) {
@@ -80,7 +79,7 @@ class SocketController {
     this.queueService.removeUserFromQueue(queueName, uid);
     this.socketMap.delete(uid);
 
-    socket.removeAllListeners();
+    socket.disconnect();
   }
 
   findUidBySocket(socket) {

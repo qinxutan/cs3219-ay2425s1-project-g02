@@ -26,8 +26,8 @@ function MatchingOptions() {
         />
       </div>
       <MatchingButton
-        selectedTopic={selectedTopic}
         selectedDifficulty={selectedDifficulty}
+        selectedTopic={selectedTopic}
       />
     </div>
   );

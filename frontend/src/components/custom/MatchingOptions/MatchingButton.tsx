@@ -8,7 +8,7 @@ interface MatchingButtonProps {
   selectedDifficulty: string[];
 }
 
-const MatchingButton: React.FC<MatchingButtonProps> = ({ selectedTopic, selectedDifficulty }) => {
+const MatchingButton: React.FC<MatchingButtonProps> = ({ selectedDifficulty, selectedTopic }) => {
   const [isMatching, setIsMatching] = useState(false);
   const [matchFound, setMatchFound] = useState(false);
   const socketRef = useRef<any>(null);
@@ -22,28 +22,41 @@ const MatchingButton: React.FC<MatchingButtonProps> = ({ selectedTopic, selected
 
   useEffect(() => {
     if (isMatching) {
-      const matchingServiceBackendUrl = import.meta.env.VITE_MATCHING_SERVICE_BACKEND_URL || "ws://localhost:5003";
+      const matchingServiceBackendUrl = import.meta.env.VITE_MATCHING_SERVICE_BACKEND_URL || "ws://localhost:5003/matching";
+      const token = sessionStorage.getItem('authToken');
 
       // Initialize WebSocket connection
-      socketRef.current = io(matchingServiceBackendUrl); // Replace with actual backend URL
+      socketRef.current = io(matchingServiceBackendUrl, {
+        auth: {
+          token
+        },
+        withCredentials: true,
+      }); 
 
       // Listen for events from backend
-      socketRef.current.on('match_found', (matchInfo: any) => {
+      socketRef.current.on('matched', (sessionData: any) => {
         reset(); // Reset stopwatch
         setMatchFound(true);
-        console.log('Match found:', matchInfo);
+        console.log('Match found: ', sessionData);
       });
 
-      socketRef.current.on('matchmaking_timed_out', () => {
+      socketRef.current.on('matchmakingTimedOut', (timedOutMessage: any) => {
         reset(); // Reset stopwatch
         setIsMatching(false);
-        console.log('Matchmaking timed out');
+        alert(timedOutMessage);
+      });
+
+      socketRef.current.on('doubleMatchingRequest', (doubleRequestMessage: any) => {
+        reset(); // Reset stopwatch
+        setIsMatching(false);
+        alert(doubleRequestMessage);
       });
 
       // Start matchmaking
-      socketRef.current.emit('start_matching', {
-        topic: selectedTopic,
+      socketRef.current.emit('startMatching', {
+        uid: sessionStorage.getItem("uid"),
         difficulty: selectedDifficulty,
+        topic: selectedTopic,
       });
 
       // Start the stopwatch
@@ -71,7 +84,9 @@ const MatchingButton: React.FC<MatchingButtonProps> = ({ selectedTopic, selected
   const handleCancelMatchmaking = () => {
     reset();
     setIsMatching(false);
-    socketRef.current.emit('cancel_matching');
+    socketRef.current.emit('cancelMatching', {
+      uid: sessionStorage.getItem("uid"),
+    });
   };
 
   return (
