@@ -8,19 +8,17 @@ class SocketController {
   }
 
   handleConnection(socket) {
-    // socket.emit("connected", () =>
-    //   console.log("Connected to matching service")
-    // );
-
     socket.on("startMatching", (data) =>
       this.handleStartMatching(socket, data)
     );
 
     socket.on("cancelMatching", (uid) => this.handleCancelMatching(uid));
+
+    socket.on("disconnect", () => this.handleDisconnect(socket));
   }
 
   handleStartMatching(socket, { uid, difficulty, topic }) {
-    this.emitDoubleMatchingRequest(uid);
+    this.emitIfDoubleMatchingRequest(uid);
     this.removeExistingConnection(uid); // Remove any existing connections for this user
 
     // Add the socket to the map
@@ -47,8 +45,8 @@ class SocketController {
     prevUserSocket.emit("matched", prevUserSessionData);
     currUserSocket.emit("matched", currUserSessionData);
 
-    prevUserSocket.disconnect();
-    currUserSocket.disconnect();
+    this.removeExistingConnection(prevUserSessionData.uid);
+    this.removeExistingConnection(currUserSessionData.uid);
   }
 
   handleTimeout(socket, uid) {
@@ -60,7 +58,15 @@ class SocketController {
     }
   }
 
-  emitDoubleMatchingRequest(uid) {
+  handleDisconnect(socket) {
+    const uid = this.findUidBySocket(socket);
+
+    if (uid) {
+      this.removeExistingConnection(uid);
+    }
+  }
+
+  emitIfDoubleMatchingRequest(uid) {
     const socketData = this.socketMap.get(uid);
     if (!socketData) return;
 
