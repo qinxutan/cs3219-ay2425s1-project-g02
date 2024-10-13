@@ -5,6 +5,7 @@ const authenticateToken = async (req, res, next) => {
   if (token == null) return res.status(401).json({ message: "Token required" });
 
   try {
+    console.log("Authenticating token");
     // Verify the token with the user service
     const userServiceBackendUrl =
       process.env.USER_SERVICE_BACKEND_URL ||
@@ -33,6 +34,7 @@ const authenticateToken = async (req, res, next) => {
 };
 
 const authenticateTokenSocket = async (socket, next) => {
+  console.log("Authenticating socket token");
   const token = socket.handshake.auth.token;
 
   if (token == null) next(new Error("Token required"));
