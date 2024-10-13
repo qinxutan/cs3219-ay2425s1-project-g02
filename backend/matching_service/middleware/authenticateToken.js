@@ -33,8 +33,6 @@ const authenticateToken = async (req, res, next) => {
 };
 
 const authenticateTokenSocket = async (socket, next) => {
-  console.log("Authenticating socket connection");
-  console.log(socket);
   const token = socket.handshake.auth.token;
 
   if (token == null) next(new Error("Token required"));
