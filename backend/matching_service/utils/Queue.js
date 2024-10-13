@@ -33,7 +33,6 @@ class Queue {
     const questionData = {
       difficulty: this.difficulty,
       topic: this.topic,
-      // question: Question
     };
     const prevUserSessionData = {
       uid: prevUid,
@@ -47,7 +46,7 @@ class Queue {
       ...questionData,
     };
 
-    return { prevUserSessionData, currUserSessionData };
+    return { questionData, prevUserSessionData, currUserSessionData };
   }
 }
 
