@@ -24,11 +24,33 @@ class SocketController {
     // Alert user if database does not contain the requested question type
     console.log(topic[0]);
     console.log(difficulty[0]);
-    const questions = await this.getAllQuestionsOfTopicAndDifficulty(socket.handshake.auth.token, topic[0], difficulty[0]);
-    if (!Array.isArray(questions) || questions.length === 0) {
-      socket.emit("noQuestionsFound", "No questions available for the selected topic and difficulty. Please choose another.");
+
+    // Set a timeout for matching
+    setTimeout(() => this.handleTimeout(socket, uid), TIMEOUT_TIME);
+
+    try {
+      const questions = await this.getAllQuestionsOfTopicAndDifficulty(
+        socket.handshake.auth.token,
+        topic[0],
+        difficulty[0]
+      );
+
+      if (!Array.isArray(questions) || questions.length === 0) {
+        socket.emit(
+          "noQuestionsFound",
+          "No questions available for the selected topic and difficulty. Please choose another."
+        );
+        socket.disconnect();
+        return; // Exit the function if no questions are found
+      }
+    } catch (error) {
+      console.error(error);
+      socket.emit(
+        "error",
+        "An error occurred while fetching questions. Please try again later."
+      );
       socket.disconnect();
-      return; // Exit the function if no questions are found
+      return;
     }
 
     // Add the socket to the map
@@ -37,9 +59,6 @@ class SocketController {
 
     const sessionData = this.queueService.matchUser(queueName, uid);
     if (sessionData) this.handleMatching(sessionData); // Proceed to handleMatching if found 2 users
-
-    // Set a timeout for matching
-    setTimeout(() => this.handleTimeout(socket, uid), TIMEOUT_TIME);
   }
 
   handleCancelMatching(uid) {
@@ -47,40 +66,74 @@ class SocketController {
   }
 
   async handleMatching(sessionData) {
-    const { questionData, prevUserSessionData, currUserSessionData } = sessionData;
+    const { questionData, prevUserSessionData, currUserSessionData } =
+      sessionData;
 
     const prevUserSocket = this.socketMap.get(prevUserSessionData.uid).socket;
     const currUserSocket = this.socketMap.get(currUserSessionData.uid).socket;
 
     const token = currUserSocket.handshake.auth.token;
     const { difficulty, topic } = questionData;
-    const questions = await this.getAllQuestionsOfTopicAndDifficulty(token, topic, difficulty);
-  
-    // Alert user if database does not contain the requested question type
-    if (!Array.isArray(questions) || questions.length === 0) {
-        prevUserSocket.emit("noQuestionsFound", "No questions available for the selected topic and difficulty. Please choose another.");
-        currUserSocket.emit("noQuestionsFound", "No questions available for the selected topic and difficulty. Please choose another.");
+
+    try {
+      const questions = await this.getAllQuestionsOfTopicAndDifficulty(
+        token,
+        topic,
+        difficulty
+      );
+
+      // Alert user if database does not contain the requested question type
+      if (!Array.isArray(questions) || questions.length === 0) {
+        prevUserSocket.emit(
+          "noQuestionsFound",
+          "No questions available for the selected topic and difficulty. Please choose another."
+        );
+        currUserSocket.emit(
+          "noQuestionsFound",
+          "No questions available for the selected topic and difficulty. Please choose another."
+        );
         this.removeExistingConnection(prevUserSessionData.uid);
         this.removeExistingConnection(currUserSessionData.uid);
         return; // Exit the function if no questions are found
+      }
+
+      // Select a random question from the returned questions
+      const randomIndex = Math.floor(Math.random() * questions.length);
+      const randomQuestion = questions[randomIndex];
+
+      // Emit matched to both users
+      prevUserSocket.emit("matched", {
+        sessionData: prevUserSessionData,
+        questionData: randomQuestion,
+      });
+      currUserSocket.emit("matched", {
+        sessionData: currUserSessionData,
+        questionData: randomQuestion,
+      });
+    } catch (error) {
+      console.error(error);
+
+      prevUserSocket.emit(
+        "error",
+        "An error occurred while fetching questions. Please try again later."
+      );
+      currUserSocket.emit(
+        "error",
+        "An error occurred while fetching questions. Please try again later."
+      );
+    } finally {
+      // Remove existing connections
+      this.removeExistingConnection(prevUserSessionData.uid);
+      this.removeExistingConnection(currUserSessionData.uid);
     }
-
-    // Select a random question from the returned questions
-    const randomIndex = Math.floor(Math.random() * questions.length);
-    const randomQuestion = questions[randomIndex];
-
-    // Emit matched to both users
-    prevUserSocket.emit("matched", { sessionData: prevUserSessionData, questionData: randomQuestion });
-    currUserSocket.emit("matched", { sessionData: currUserSessionData, questionData: randomQuestion });
-
-    // Remove existing connections
-    this.removeExistingConnection(prevUserSessionData.uid);
-    this.removeExistingConnection(currUserSessionData.uid);
-}
+  }
 
   handleTimeout(socket, uid) {
     if (!socket.disconnected) {
-      socket.emit("matchmakingTimedOut", `Matchmaking timed out after ${TIMEOUT_TIME / 1000}s`);
+      socket.emit(
+        "matchmakingTimedOut",
+        `Matchmaking timed out after ${TIMEOUT_TIME / 1000}s`
+      );
       console.log(`timed out after ${TIMEOUT_TIME / 1000}s`);
 
       this.removeExistingConnection(uid);
@@ -100,7 +153,10 @@ class SocketController {
     if (!socketData) return;
 
     const { socket, queueName } = socketData;
-    socket.emit("doubleMatchingRequest", "Double matching request detected, stopping current tab's matching request")
+    socket.emit(
+      "doubleMatchingRequest",
+      "Double matching request detected, stopping current tab's matching request"
+    );
   }
 
   removeExistingConnection(uid) {
@@ -118,31 +174,31 @@ class SocketController {
   }
 
   async getAllQuestionsOfTopicAndDifficulty(token, topic, difficulty) {
-    const questionServiceTopicAndDifficultyBackendUrl = process.env.QUESTION_SERVICE_TOPIC_AND_DIFFICULTY_BACKEND_URL || "http://localhost:5002/get-questions-of-topic-and-difficulty";
+    const questionServiceTopicAndDifficultyBackendUrl =
+      process.env.QUESTION_SERVICE_TOPIC_AND_DIFFICULTY_BACKEND_URL ||
+      "http://localhost:5002/get-questions-of-topic-and-difficulty";
 
-    try {
-        const response = await fetch(questionServiceTopicAndDifficultyBackendUrl, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                topic: topic,
-                difficulty: difficulty
-            })
-        });
+    const response = await fetch(questionServiceTopicAndDifficultyBackendUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        topic: topic,
+        difficulty: difficulty,
+      }),
+    });
 
-        // Check if the response is OK 
-        if (!response.ok) {
-            throw new Error(`Error fetching questions: ${response.status} ${response.statusText}`);
-        }
-
-        const questions = await response.json();
-        return questions;
-    } catch (error) {
-      console.error(error);
+    // Check if the response is OK
+    if (!response.ok) {
+      throw new Error(
+        `Error fetching questions: ${response.status} ${response.statusText}`
+      );
     }
+
+    const questions = await response.json();
+    return questions;
   }
 
   findUidBySocket(socket) {
