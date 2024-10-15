@@ -24,8 +24,14 @@ How to deploy website to public:
   docker tag question_service gcr.io/peerprep-g02/question_service
   docker push gcr.io/peerprep-g02/question_service
 
+  cd ../matching_service
+  docker build --build-arg USER_SERVICE_BACKEND_URL=https://user-service-1079323726684.asia-southeast1.run.app/verify-token --build-arg QUESTION_SERVICE_TOPIC_AND_DIFFICULTY_BACKEND_URL=https://question-service-1079323726684.asia-southeast1.run.app/get-questions-of-topic-and-difficulty -t matching_service .
+  docker tag matching_service gcr.io/peerprep-g02/matching_service
+  docker push gcr.io/peerprep-g02/matching_service
+
   cd ../../frontend
-  docker build --build-arg VITE_QUESTION_SERVICE_BACKEND_URL=https://question-service-1079323726684.asia-southeast1.run.app -t frontend .
+  docker build --build-arg VITE_QUESTION_SERVICE_BACKEND_URL=https://question-service-1079323726684.asia-southeast1.run.app --build-arg VITE_MATCHING_SERVICE_BACKEND_URL=wss://matching-service-1079323726684.asia-southeast1.run.app/matching -t frontend .
+
   docker tag frontend gcr.io/peerprep-g02/frontend
   docker push gcr.io/peerprep-g02/frontend
   ```
