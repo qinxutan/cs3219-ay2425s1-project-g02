@@ -25,10 +25,14 @@ io.on('connection', (socket) => {
   });
 
   // Joining a specific collaboration session
-  socket.on('joinSession', (sessionId) => {
+  socket.on('joinSession', ({ sessionId, userId }) => {
     socket.join(sessionId);
-    console.log(`User ${socket.id} joined session ${sessionId}`);
-  });
+    console.log(`User ${userId} joined session ${sessionId}`);
+    userId = socket.id;
+
+    // Emit the sessionId and userId back to the client
+    socket.emit('sessionJoined', { sessionId, userId });
+});
 
   // Handle real-time code updates
   socket.on('codeUpdate', (data) => {
@@ -37,6 +41,19 @@ io.on('connection', (socket) => {
     socket.to(sessionId).emit('codeUpdated', { code });
     console.log(`Code updated in session ${sessionId}: ${code}`);
   });
+
+  socket.on('sendMessage', (data) => {
+    const { sessionId, message } = data;
+    io.to(sessionId).emit('messageReceived', {
+      username: socket.id,
+      message
+    });
+  });
+
+  socket.on('terminateSession', (sessionId) => {
+    // Notify all users in the session except the one who terminated it
+    socket.to(sessionId).emit('sessionTerminated', { userId: socket.id });
+});
 
   // Handle disconnect
   socket.on('disconnect', () => {
