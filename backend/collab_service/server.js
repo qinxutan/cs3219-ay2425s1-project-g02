@@ -27,12 +27,19 @@ io.on('connection', (socket) => {
   // Joining a specific collaboration session
   socket.on('joinSession', ({ sessionId, userId }) => {
     socket.join(sessionId);
-    console.log(`User ${userId} joined session ${sessionId}`);
+    console.log(`User ${socket.id} joined session ${sessionId}`);
     userId = socket.id;
 
     // Emit the sessionId and userId back to the client
     socket.emit('sessionJoined', { sessionId, userId });
-});
+  });
+
+  socket.on('sendQuestionData', (data) => {
+    const { sessionId, questionData } = data;
+    console.log('Received question data:', data);
+    socket.to(sessionId).emit('questionDataReceived', questionData);
+    console.log(`Question data sent to session ${sessionId}:`, questionData);
+  });
 
   // Handle real-time code updates
   socket.on('codeUpdate', (data) => {

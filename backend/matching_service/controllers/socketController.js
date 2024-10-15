@@ -110,6 +110,17 @@ class SocketController {
         sessionData: currUserSessionData,
         questionData: randomQuestion,
       });
+
+      prevUserSocket.emit('sendQuestionData', {
+        sessionId: prevUserSessionData.sessionId,
+        questionData: randomQuestion,
+      });
+
+      currUserSocket.emit('sendQuestionData', {
+        sessionId: currUserSessionData.sessionId,
+        questionData: randomQuestion,
+      });
+      
     } catch (error) {
       console.error(error);
 

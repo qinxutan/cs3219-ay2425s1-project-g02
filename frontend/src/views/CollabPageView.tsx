@@ -49,6 +49,7 @@ const CollabPageView: React.FC = () => {
 	const [sessionId, setSessionId] = useState<string>("session123"); // State to manage sessionId
     const [userId, setUserId] = useState<string>(""); // State to manage userId
 	const navigate = useNavigate();
+	const [questionData, setQuestionData] = useState<Question>(customQuestion);
 
 	useEffect(() => {
 		// Initialize the WebSocket connection when the component mounts
@@ -70,6 +71,11 @@ const CollabPageView: React.FC = () => {
 		newSocket.on("codeUpdated", (data) => {
 			console.log("Code update received from server:", data);
 			setCode(data.code);
+		});
+
+		newSocket.on("questionDataReceived", (data) => {
+			console.log("Question data received from server:", data);
+			setQuestionData(data); // Update question data from the matching service
 		});
 
 		newSocket.on('sessionTerminated', ({ userId }) => {
@@ -170,7 +176,7 @@ const CollabPageView: React.FC = () => {
 				>
 					{/* id & title */}
 					<h2 style={{ fontSize: "2rem", fontWeight: "bold" }}>
-						{customQuestion.id}. {customQuestion.title}
+						{questionData.id}. {questionData.title}
 					</h2>
 
 					{/* tags (difficulty & topics) */}
@@ -183,8 +189,8 @@ const CollabPageView: React.FC = () => {
 							gap: "10px",
 						}}
 					>
-						<Badge>{customQuestion.difficulty}</Badge>
-						{customQuestion.topics.map((topic, index) => (
+						<Badge>{questionData.difficulty}</Badge>
+						{questionData.topics.map((topic, index) => (
 							<Badge key={index} variant="outline">
 								{topic}
 							</Badge>
@@ -192,11 +198,11 @@ const CollabPageView: React.FC = () => {
 					</div>
 
 					{/* description */}
-					<p>{customQuestion.description}</p>
+					<p>{questionData.description}</p>
 
 					{/* examples */}
 					<div style={{ marginTop: "35px" }}>
-						{customQuestion.examples.map((example, index) => (
+						{questionData.examples.map((example, index) => (
 							<div key={index} style={{ marginBottom: "20px" }}>
 								<p style={{ marginBottom: "10px" }}>
 									<strong>Example {index + 1}:</strong>
@@ -229,7 +235,7 @@ const CollabPageView: React.FC = () => {
 						<div style={{ marginTop: "35px" }}>
 							<strong>Constraints:</strong>
 							<ul style={{ listStyleType: "disc", paddingLeft: "20px" }}>
-								{customQuestion.constraints.map((constraint, index) => (
+								{questionData.constraints.map((constraint, index) => (
 									<li key={index}>{constraint}</li>
 								))}
 							</ul>

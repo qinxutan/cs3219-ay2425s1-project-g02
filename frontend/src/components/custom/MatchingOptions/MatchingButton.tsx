@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client"; // WebSocket client for Socket.IO
 import { Button } from "@/components/ui/button";
 import { useStopwatch } from "react-timer-hook";
+import { useNavigate } from "react-router-dom";
 
 interface MatchingButtonProps {
   selectedTopic: string[];
@@ -15,6 +16,7 @@ const MatchingButton: React.FC<MatchingButtonProps> = ({
   const [isMatching, setIsMatching] = useState(false);
   const [matchFound, setMatchFound] = useState(false);
   const socketRef = useRef<any>(null);
+  const navigate = useNavigate();
 
   const { seconds, minutes, start, reset } = useStopwatch({ autoStart: false });
 
@@ -38,6 +40,7 @@ const MatchingButton: React.FC<MatchingButtonProps> = ({
         reset(); // Reset stopwatch
         setMatchFound(true);
         console.log("Match found: ", data);
+        navigate("/collab");
       });
 
       socketRef.current.on("matchmakingTimedOut", (timedOutMessage: any) => {
