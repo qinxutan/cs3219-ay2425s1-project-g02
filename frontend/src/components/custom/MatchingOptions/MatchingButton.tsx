@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useStopwatch } from "react-timer-hook";
 import { useNavigate } from "react-router-dom";
 
+
 interface MatchingButtonProps {
   selectedTopic: string[];
   selectedDifficulty: string[];
@@ -40,7 +41,10 @@ const MatchingButton: React.FC<MatchingButtonProps> = ({
         reset(); // Reset stopwatch
         setMatchFound(true);
         console.log("Match found: ", data);
-        navigate("/collab");
+      });
+
+      socketRef.current.on("navigateToCollab", (data: any) => {
+        navigateToCollabPage(data); // Now we navigate to the collaboration page
       });
 
       socketRef.current.on("matchmakingTimedOut", (timedOutMessage: any) => {
@@ -108,6 +112,12 @@ const MatchingButton: React.FC<MatchingButtonProps> = ({
     socketRef.current.emit("cancelMatching", {
       uid: sessionStorage.getItem("uid"),
     });
+  };
+
+  const navigateToCollabPage = (data: any) => {
+    console.log("Navigating to collaboration page with data:", data);
+    const { sessionId } = data; // Extract sessionId from the data object
+    navigate(`/collab/${sessionId}`);
   };
 
   return (

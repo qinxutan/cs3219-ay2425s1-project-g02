@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const customQuestion: Question = {
 	id: "q123",
@@ -43,40 +44,40 @@ const customQuestion: Question = {
 
 const CollabPageView: React.FC = () => {
 	const [code, setCode] = useState("");
-	const [socket, setSocket] = useState<Socket | null>(null);
-	const [message, setMessage] = useState(""); // For new message input
-	const [messages, setMessages] = useState<{ username: string; message: string }[]>([]);
-	const [sessionId, setSessionId] = useState<string>("session123"); // State to manage sessionId
-    const [userId, setUserId] = useState<string>(""); // State to manage userId
-	const navigate = useNavigate();
-	const [questionData, setQuestionData] = useState<Question>(customQuestion);
+   	const [socket, setSocket] = useState<Socket | null>(null);
+   	const [message, setMessage] = useState(""); // For new message input
+   	const [messages, setMessages] = useState<{ username: string; message: string }[]>([]);
+   	const [userId, setUserId] = useState<string>("");
+   	const navigate = useNavigate();
+   	const [questionData, setQuestionData] = useState<Question>(customQuestion);
+   	const { sessionId: sessionIdObj } = useParams<{ sessionId: string }>();
 
 	useEffect(() => {
 		// Initialize the WebSocket connection when the component mounts
 		const newSocket = io("http://localhost:5004"); // Backend WebSocket server URL
 		setSocket(newSocket);
-
+ 
 		newSocket.on("connect", () => {
 			console.log("WebSocket connected");
-			newSocket.emit("joinSession", { sessionId, userId });
+			console.log("Emitting sessionJoined with sessionId:", sessionIdObj);
+			newSocket.emit("sessionJoined", sessionIdObj );
+		});
+ 
+		newSocket.on('sessionData', ({ sessionIdObj, socketId, questionData }) => {
+			sessionIdObj = sessionIdObj;
+			// Set state with the received data
+			setUserId(socketId);
+			setQuestionData(questionData);
 		});
 
-		newSocket.on('sessionJoined', ({ sessionId, userId }) => {
-            console.log(`Joined session: ${sessionId} with userId: ${userId}`);
-            setSessionId(sessionId);
-            setUserId(userId); 
-        });
-
+		console.log("Current user ID:", userId);
+ 
+ 
 		// Listen for code updates from the server
 		newSocket.on("codeUpdated", (data) => {
 			console.log("Code update received from server:", data);
 			setCode(data.code);
-		});
-
-		newSocket.on("questionDataReceived", (data) => {
-			console.log("Question data received from server:", data);
-			setQuestionData(data); // Update question data from the matching service
-		});
+		}); 
 
 		newSocket.on('sessionTerminated', ({ userId }) => {
 			console.log(`Session terminated by user with ID: ${userId}`);
@@ -86,7 +87,7 @@ const CollabPageView: React.FC = () => {
 	
 
 		newSocket.on("messageReceived", (data) => {
-			setMessages((prevMessages) => [...prevMessages, { username: data.username, message: data.message }]);
+			setMessages((prevMessages) => [...prevMessages, { username: data.username, message: data.message },]);
 		});
 
 		return () => {
@@ -97,12 +98,13 @@ const CollabPageView: React.FC = () => {
 	const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const newCode = e.target.value;
 		setCode(newCode); // Update the local state
-
+ 
+ 
 		// Emit the code update to the WebSocket server
 		if (socket) {
 			console.log("Emitting code update:", newCode);
 			socket.emit("codeUpdate", {
-				sessionId, // Example session ID
+				sessionIdObj, // Example session ID
 				code: newCode,
 			});
 		}
@@ -111,8 +113,9 @@ const CollabPageView: React.FC = () => {
 	const handleMessageSend = () => {
 		if (message.trim() && socket) {
 			socket.emit("sendMessage", {
-				sessionId,
+				sessionId: sessionIdObj,
 				message: message.trim(),
+				username: userId,
 			});
 			setMessage(""); // Clear the input field
 		}
@@ -121,7 +124,7 @@ const CollabPageView: React.FC = () => {
 	// Handle Quit Session button click
 	const handleQuitSession = () => {
 		if (socket) {
-			socket.emit("terminateSession", sessionId);
+			socket.emit("terminateSession", sessionIdObj);
 		  }
 		navigate("/questions");
 	};

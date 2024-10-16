@@ -58,14 +58,14 @@ class SocketController {
     this.socketMap.set(uid, { socket, queueName });
 
     const sessionData = this.queueService.matchUser(queueName, uid);
-    if (sessionData) this.handleMatching(sessionData); // Proceed to handleMatching if found 2 users
+    if (sessionData) this.handleMatching(socket,sessionData); // Proceed to handleMatching if found 2 users
   }
 
   handleCancelMatching(uid) {
     this.removeExistingConnection(uid);
   }
 
-  async handleMatching(sessionData) {
+  async handleMatching(socket, sessionData) {
     const { questionData, prevUserSessionData, currUserSessionData } =
       sessionData;
 
@@ -74,6 +74,10 @@ class SocketController {
 
     const token = currUserSocket.handshake.auth.token;
     const { difficulty, topic } = questionData;
+
+    const createsession =
+      process.env.COLLAB_SERVICE_CREATE_SESSION_BACKEND_URL ||
+      "http://localhost:5004/create-session";
 
     try {
       const questions = await this.getAllQuestionsOfTopicAndDifficulty(
@@ -111,15 +115,37 @@ class SocketController {
         questionData: randomQuestion,
       });
 
-      prevUserSocket.emit('sendQuestionData', {
-        sessionId: prevUserSessionData.sessionId,
-        questionData: randomQuestion,
-      });
+      console.log("Creating session...");
+      const sessionId = `session_${Date.now()}`;
 
-      currUserSocket.emit('sendQuestionData', {
-        sessionId: currUserSessionData.sessionId,
-        questionData: randomQuestion,
+      const requestBody = {
+        sessionId: sessionId, // ID of the session
+        sessionData: sessionData, // Data related to the session (user info, etc.)
+        questionData: randomQuestion, // Random question to be included in the session
+      };
+      
+      // Log the request body
+      console.log('Request Body:', JSON.stringify(requestBody));
+      
+      const response = await fetch(createsession, {
+        method: "POST",
+        headers: {
+            'Authorization': `Bearer ${token}`, // If using JWT or similar
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
       });
+    
+    if (response.ok) {
+        const result = await response.json();
+        console.log('Session created:', result);
+    } else {
+        const error = await response.json();
+        console.error('Error creating session:', error);
+    }
+      
+      console.log("Emitting navigateToCollab to both users with session ID:", sessionId);
+      this.emitNavigateToCollab(prevUserSocket, currUserSocket, sessionId, sessionData.prevUser, sessionData.currUser, questionData);
       
     } catch (error) {
       console.error(error);
@@ -137,6 +163,13 @@ class SocketController {
       this.removeExistingConnection(prevUserSessionData.uid);
       this.removeExistingConnection(currUserSessionData.uid);
     }
+  }
+
+  emitNavigateToCollab(prevUserSocket, currUserSocket, sessionId, prevUserSessionData, currUserSessionData, questionData){
+    // Navigate to collab and pass session info
+    prevUserSocket.emit("navigateToCollab", { sessionId, sessionData: prevUserSessionData, questionData });
+    currUserSocket.emit("navigateToCollab", { sessionId, sessionData: currUserSessionData, questionData });
+
   }
 
   handleTimeout(socket, uid) {
